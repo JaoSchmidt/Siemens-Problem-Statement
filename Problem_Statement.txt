@@ -1,0 +1,21 @@
+Problem Statement:
+
+CISA in accordance with Executive Order 14028 and the Office of Management and Budget’s (OMB) guide in OMB M-22-18, Enhancing the Security of the Software Supply 
+Chain through Secure Software Development Practices, released a draft Secure Software Development Attestation Common Form. Every business selling to the government
+has to attest to secure software development for every major software release. Since the form has to be filled and signed for every major release of every software
+product it would become tedious to manage. Additionally, different participants would be responsible for the confirmation for different sections of the form, 
+it would become extremely difficult for coordination.
+
+https://www.cisa.gov/sites/default/files/2023-11/Secure%20Software%20Development%20Attestation%20Form_508c.pdf
+
+Solution: Build or find a solution which has capability to trigger the generation of the form for each release through an API, assign tasks to individuals responsible for 
+the different sections of the form. Store the forms signed and shared already. 
+ - Create the capability to register a trigger request for Self Attestation form
+  - Match if there is already an existing attestation for the product+version number already existing
+ - Based on the responsibles registered for each product the trigger request is then assigned to the responsible PPSSO
+ - The PPSSO can then trigger the "flow",
+   - The flow creation is also a feature required -> The steps are constant but can be assigned to different persons -> assigned by the PPSSO
+ - Digital document signing (PDF) is a required feature
+ - The storage of signed PDFs should be a feature, the PDFs are encrypted with the key by PPSSO
+ - API support to trigger the flow, generation and signing of the forms from the CI/CD pipelines
+ - Import of product names from API

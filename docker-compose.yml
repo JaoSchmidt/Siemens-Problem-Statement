@@ -1,0 +1,23 @@
+version: '3'
+services:
+    api:
+        build: .
+        ports:
+            - 5000:5000
+        volumes:
+            - ./api:/api
+    db:
+        image: mysql:8.0.21
+        restart: always
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_DATABASE: attestation
+            MYSQL_USER: test
+            MYSQL_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: example
+        volumes:
+            - ./db:/var/lib/mysql:z
+volumes:
+    web:
+    db:

@@ -25,7 +25,7 @@ const password = ref(null);
 
 const tryLoginHandler = () => {
   
-  axios.post(`../api/checkUser`, {
+  axios.post(`http://localhost:5000/api/checkUser`, {
   headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
   data: {
     username: username.value.value,

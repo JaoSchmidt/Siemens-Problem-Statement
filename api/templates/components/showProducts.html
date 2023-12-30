@@ -1,9 +1,18 @@
 <div class="flex flex-col">
-    {% for p in products %}
-    <div class="flex flex-row border shadow-md">
-        <span class="min-w-[200px] mr-2">{{ p[0] }}</span>
-        <span class="min-w-[200px] mr-2">{{ p[1] }}</span>
-        <button class="btn btn-primary"></button>
+    <div class="flex flex-row items-center border-b-2 mb-4">
+        <span class="min-w-[200px] mr-2">Product Name</span>
+        <span class="min-w-[200px] mr-2">Versions</span>
     </div>
+    {% for p in products %}
+    <div class="flex flex-row items-center shadow-md my-2">
+        <span class="min-w-[200px] mr-2">{{ p[0] }}</span>
+        <span id="versions" class="flex flex-row min-w-[200px] mr-2">
+        {% for v in p[1] %}
+        {{ v[0] }}
+        {% endfor %}
+        </span>
+        <button class="btn btn-primary text-white"> Ver Responsáveis </button>
+    </div>
+    <span class="w-full h-[1px] bg-white opacity-30"></span>
     {% endfor %}
 </div>

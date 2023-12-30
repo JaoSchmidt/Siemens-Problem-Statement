@@ -1,0 +1,10 @@
+<div class="flex flex-col">
+    {% for a in attestation %}
+    <div class="flex flex-row items-center shadow-md my-2">
+        <span class="min-w-[200px] mr-2">{{ p[0] }}</span>
+        <span class="min-w-[200px] mr-2">{{ p[1] }}</span>
+        <button class="btn btn-primary text-white"> Assigned To </button>
+    </div>
+    <span class="w-full h-[1px] bg-white opacity-30"></span>
+    {% endfor %}
+</div>

@@ -101,11 +101,26 @@ def showProducts():
     conn = mysql.connector.connect(**DATABASE_CONFIG)
     cursor = conn.cursor()
 
-    sql ="SELECT * FROM PRODUCT_VERSION;"
+    res_data = []
+
+    sql = "SELECT * FROM PRODUCT_VERSION GROUP BY PRODUCT_ID;"
     cursor.execute(sql)
     data = cursor.fetchall()
 
-    return render_template('/components/showProducts.html', products=data)
+    getVersions = "SELECT VERSION_ID FROM PRODUCT_VERSION WHERE PRODUCT_ID = %s;"
+    for p in data:
+        params = [p[0]]
+        cursor.execute(getVersions, params)
+        versions = cursor.fetchall()
+
+        versions_arr = []
+        for v in versions:
+            versions_arr.append(v)
+
+        res_data.append( [p[0], versions_arr] )
+        
+
+    return render_template('/components/showProducts.html', products=res_data)
 
 """ @app.route('/submit_form', methods=['POST'])
 def submit_form():

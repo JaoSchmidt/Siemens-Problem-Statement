@@ -25,7 +25,7 @@ DATABASE_CONFIG = {
 
 @app.route('/')
 def main():
-    token = request.cookies.get('token')
+    user = request.cookies.get('user')
 
     """ conn = mysql.connector.connect(**DATABASE_CONFIG)
     cursor = conn.cursor()
@@ -35,17 +35,17 @@ def main():
     cursor.execute(sql, input)
     data = cursor.fetchone() """
 
-    if token:
+    if user:
         return redirect('dashboard')
     else :
-        return render_template('login.html', users=token)
+        return render_template('login.html', users=user)
 
 
 @app.route('/dashboard')
 def dashboard():
-    token = request.cookies.get('token')
+    user = request.cookies.get('user')
 
-    if token:
+    if user:
         return render_template('dashboard.html')
     else:
         return redirect('/')
@@ -89,7 +89,7 @@ def checkUser():
     if len(row) == 0:
         return {"code": "-1"}
     elif decode(row[2]) == input_password:
-        return {"code": "1"}
+        return {"code": "1", "user": row[0]}
     else:
         return {"code": "0"}
 
@@ -121,6 +121,30 @@ def showProducts():
         
 
     return render_template('/components/showProducts.html', products=res_data)
+
+##### Get PPSSO products where ATTESTATION_ID IS NULL
+@app.route('/api/components/getAttestationAlert', methods=['POST'])
+def getAttestationAlert():
+
+    data = request.get_json()
+    user_id = data["data"].get('user_id')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+    
+    sql = """
+    SELECT PRODUCT_ID, VERSION_ID FROM PRODUCT_VERSION PV
+    LEFT JOIN PRODUCT_X_RESPONSIBLE_USER PXRU ON PXRU.FK_PRODUCTID_PXRU = PV.PRODUCT_ID
+    WHERE PXRU.FK_USERID_PXRU = %s
+    AND PXRU.IS_PPSSO = 1
+    AND PV.FK_ATTESTATION_ID_PV IS NULL;
+    """
+    params=[user_id]
+    cursor.execute(sql, params)
+    res = cursor.fetchall()
+
+    return render_template('/components/attestationAlert.html', attestations=res)
+
 
 """ @app.route('/submit_form', methods=['POST'])
 def submit_form():

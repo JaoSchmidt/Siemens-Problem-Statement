@@ -1,0 +1,11 @@
+{% for a in attestations %}
+<div class="collapse collapse-arrow bg-base-200">
+    <input type="radio" name="my-accordion-2" /> 
+    <div class="collapse-title text-xl font-medium">
+        Attestation Missing
+    </div>
+    <div class="collapse-content"> 
+        Product: {{ a[0] }} Version: {{ a[1] }}
+    </div>
+</div>
+{% endfor %}

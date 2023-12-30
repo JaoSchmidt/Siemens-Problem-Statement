@@ -35,12 +35,13 @@
     }).then( (response) => {
       
       let code = response.data["code"];
+      let user = response.data["user"];
 
       if ( code == "1" ) {
-        document.cookie = "token=true"
-        window.location.replace("/dashboard")
+        document.cookie = "user="+user;
+        window.location.replace("/dashboard");
       } else {
-        alert("Credenciais Incorretas ou usuário não existe!")
+        alert("Credenciais Incorretas ou usuário não existe!");
       }
     });
 

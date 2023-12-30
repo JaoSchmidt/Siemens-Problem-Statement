@@ -17,6 +17,10 @@
     <button class="btn btn-primary mx-4 text-white"> Attestations </button>
   </header>
 
+  <div id="adminAlerts" class="h-auto max-w-[20%] mt-10">
+
+  </div>
+
   <div id="modalBoxLoader" class="hidden flex-col justify-center items-center fixed top-0 left-0 
   h-[100vh] w-[100vw] bg-[rgba(0,0,0,0.7)]">
     <span class="loading loading-spinner text-primary w-24"></span>
@@ -65,4 +69,32 @@
     });
 
   });
+
+
+  function getCookie(name) {
+    let value = `; ${document.cookie}`;
+    let parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  
+  $(document).ready( () => {
+
+    $("#modalBoxLoader").css("display", "flex");
+    
+    axios.post(`/api/components/getAttestationAlert`, {
+    headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
+    data: {
+      user_id: getCookie('user') 
+    },
+    }).then( (response) => {
+
+      $("#modalBoxLoader").css("display", "none");
+
+      jQuery(response.data).appendTo( $("#adminAlerts") );
+
+    });
+
+  });
+
+
 </script>

@@ -5,3 +5,6 @@ __pycache__/
 
 api/__pycache__/
 db/
+/temp
+/.venv
+/__pycache__

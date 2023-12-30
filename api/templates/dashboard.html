@@ -8,9 +8,57 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 </head>
-<body class="min-h-[100vh] w-[100vw] flex flex-col justify-center items-center">
+<body data-theme="sunset" class="min-h-[100vh] w-[100vw] flex flex-col">
 
-  Dashboard galera!
+  <header class="h-[80px] w-full flex flex-row items-center justify-center">
+    <button class="btn btn-primary mx-4 text-white" onclick="openMenuHandler"> Generate New Attestation </button>
+    <button id="getProductsHandler" class="btn btn-primary mx-4 text-white" onclick="openMenuHandler"> Products </button>
+    <button class="btn btn-primary mx-4 text-white" onclick="openMenuHandler"> Attestations </button>
+  </header>
+
+  <div id="modalBoxLoader" class="hidden flex flex-col justify-center items-center fixed top-0 left-0 
+  h-[100vh] w-full bg-[rgba(0,0,0,0.7)]">
+    <span class="loading loading-spinner text-primary w-36"></span>
+  </div>
+
+  <dialog id="menuModal" class="modal">
+    <div class="modal-box flex flex-col max-h-[80vh]">
+
+        <header class="h-[100px] w-full flex flex-row items-center">
+
+        </header>
+
+        <div id="menuModalContent" class="flex flex-col flex-1 overflow-y-auto">
+        
+        </div>
+
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+  </dialog>
+  
 
 </body>
 </html>
+<script>
+  
+
+  $("#getProductsHandler").on("click", () => {
+
+    $("#modalBoxLoader").show();
+
+    axios.get(`/api/components/showProducts`, {
+    headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*' },
+    }).then( (response) => {
+
+      $("#modalBoxLoader").hide();
+
+      jQuery(response.data).appendTo( $("#menuModalContent") );
+      
+      menuModal.showModal()
+
+    });
+
+  });
+</script>

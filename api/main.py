@@ -6,6 +6,7 @@ import mysql.connector
 app = Flask(__name__)
 
 
+
 DATABASE_CONFIG = {
     "host":"srv881.hstgr.io",
     "user": "u138282597_jao",
@@ -15,20 +16,30 @@ DATABASE_CONFIG = {
 
 @app.route('/')
 def main():
+    token = request.cookies.get('token')
 
-    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    """ conn = mysql.connector.connect(**DATABASE_CONFIG)
     cursor = conn.cursor()
 
     sql ="SELECT * FROM USERS WHERE USERNAME = %s;"
     input=['Gabriel']
     cursor.execute(sql, input)
-    data = cursor.fetchone()
+    data = cursor.fetchone() """
 
-    return render_template('login.html', users=data)
+    if token:
+        return redirect('dashboard')
+    else :
+        return render_template('login.html', users=token)
+
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    token = request.cookies.get('token')
+
+    if token:
+        return render_template('dashboard.html')
+    else:
+        return redirect('/')
 
 
 
@@ -49,11 +60,27 @@ def checkUser():
     cursor.execute(sql, params)
     row = cursor.fetchone()
     
-    if row[2] == input_password:
-        return render_template(url_for('dashboard'))
-    else:
+    if len(row) == 0:
         return {"code": "-1"}
+    elif row[2] == input_password:
+        isUserLogged = True
+        return {"code": "1"}
+    else:
+        return {"code": "0"}
 
+
+###### API GET TEMPLATES
+@app.route('/api/components/showProducts', methods=['GET'])
+def showProducts():
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    sql ="SELECT * FROM PRODUCT_VERSION;"
+    cursor.execute(sql)
+    data = cursor.fetchall()
+
+    return render_template('/components/showProducts.html', products=data)
 
 """ @app.route('/submit_form', methods=['POST'])
 def submit_form():

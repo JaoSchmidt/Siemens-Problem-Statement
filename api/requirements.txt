@@ -1,2 +1,3 @@
 Flask>=2.1.0
 mysql-connector-python>=4.21.12
+pyjwt>=1.4.2

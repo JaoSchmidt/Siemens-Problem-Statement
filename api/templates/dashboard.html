@@ -17,15 +17,15 @@
     <button class="btn btn-primary mx-4 text-white" onclick="openMenuHandler"> Attestations </button>
   </header>
 
-  <div id="modalBoxLoader" class="hidden flex flex-col justify-center items-center fixed top-0 left-0 
-  h-[100vh] w-full bg-[rgba(0,0,0,0.7)]">
-    <span class="loading loading-spinner text-primary w-36"></span>
+  <div id="modalBoxLoader" class="hidden flex-col justify-center items-center fixed top-0 left-0 
+  h-[100vh] w-[100vw] bg-[rgba(0,0,0,0.7)]">
+    <span class="loading loading-spinner text-primary w-24"></span>
   </div>
 
   <dialog id="menuModal" class="modal">
     <div class="modal-box flex flex-col max-h-[80vh]">
 
-        <header class="h-[100px] w-full flex flex-row items-center">
+        <header class="h-[50px] w-full flex flex-row items-center">
 
         </header>
 
@@ -48,13 +48,15 @@
 
   $("#getProductsHandler").on("click", () => {
 
-    $("#modalBoxLoader").show();
+    $("#modalBoxLoader").css("display", "flex");
 
     axios.get(`/api/components/showProducts`, {
     headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*' },
     }).then( (response) => {
 
-      $("#modalBoxLoader").hide();
+      $("#menuModalContent").remove();
+
+      $("#modalBoxLoader").css("display", "none");
 
       jQuery(response.data).appendTo( $("#menuModalContent") );
       

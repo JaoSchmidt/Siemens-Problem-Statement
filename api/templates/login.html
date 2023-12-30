@@ -12,23 +12,19 @@
 
 <body class="min-h-[100vh] w-[100vw] flex flex-col justify-center items-center">
 
-	{{ users }}
-	<form>
-		<input id="username" class="input input-primary my-2 w-64" type="text" placeholder="Username">
-		<input id="password" class="input input-primary my-2 w-64" type="password" placeholder="Password">
-		<button id="tryLoginHandler" type="submit" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Entrar
-		</button>
-	</form>
+  <input id="username" class="input input-primary my-2 w-64" type="text" placeholder="Username">
+  <input id="password" class="input input-primary my-2 w-64" type="password" placeholder="Password">
+  <button id="tryLoginHandler" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Entrar</button>
 
 </body>
 
 </html>
 
-<!-- <script> -->
-<!--   $("#tryLoginHandler").on("click", () => { -->
+ <script>
+   $("#tryLoginHandler").on("click", () => { 
 
-<!--     let username = $("#username").val(); -->
-<!--     let password = $("#password").val(); -->
+    let username = $("#username").val(); 
+    let password = $("#password").val(); 
 
     axios.post(`/api/checkUser`, {
     headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
@@ -48,5 +44,5 @@
       }
     });
 
-<!--   }); -->
-<!-- </script> -->
+   }); 
+ </script> 

@@ -1,11 +1,12 @@
 import sys
 from flask import Flask, request, jsonify, render_template, redirect, url_for
+import jwt
 import mysql.connector
 #import hashlib
 
 app = Flask(__name__)
 
-
+app.secret_key = "jaojaojao"
 
 DATABASE_CONFIG = {
     "host":"srv881.hstgr.io",
@@ -13,6 +14,14 @@ DATABASE_CONFIG = {
     "password": "bananasplitBA$$22",
     "database": "u138282597_siemens"
 }
+
+""" DATABASE_CONFIG = {
+    "host":"db",
+    "user": "test",
+    "password": "password",
+    "database": "attestation"
+} """
+
 
 @app.route('/')
 def main():
@@ -43,6 +52,23 @@ def dashboard():
 
 
 
+
+# @param => { "password" => input } to encode
+@app.route('/signup')
+def encode():
+    
+    data = request.get_json()
+
+    return jwt.encode(data, app.secret_key, algorithm='HS256')
+
+
+def decode( data ):
+
+    data = jwt.decode(data, app.secret_key, algorithms=['HS256'])
+    return data["password"]
+
+
+
 ###### API FETCH
 @app.route('/api/checkUser', methods=['POST'])
 def checkUser():
@@ -62,8 +88,7 @@ def checkUser():
     
     if len(row) == 0:
         return {"code": "-1"}
-    elif row[2] == input_password:
-        isUserLogged = True
+    elif decode(row[2]) == input_password:
         return {"code": "1"}
     else:
         return {"code": "0"}

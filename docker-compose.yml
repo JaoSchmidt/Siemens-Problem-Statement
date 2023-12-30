@@ -1,7 +1,9 @@
 version: '3'
 services:
     api:
-        build: .
+        build: 
+            context: ./
+            dockerfile: dockerfiles/python-flask
         ports:
             - 5000:5000
         volumes:
@@ -18,6 +20,16 @@ services:
             MYSQL_ROOT_PASSWORD: example
         volumes:
             - ./db:/var/lib/mysql:z
+    web:
+        build: 
+            context: ./
+            dockerfile: dockerfiles/node-vue
+        ports:
+          - 8080:8080
+        volumes:
+            - ./frontend/:/app
+        depends_on:
+          - api
 volumes:
     web:
     db:

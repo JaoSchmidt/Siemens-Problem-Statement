@@ -8,3 +8,4 @@ db/
 /temp
 /.venv
 /__pycache__
+node_modules/

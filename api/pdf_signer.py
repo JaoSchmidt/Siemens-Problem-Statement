@@ -10,13 +10,17 @@ from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
 from pyhanko.sign.fields import SigFieldSpec, append_signature_field
 from pyhanko.sign.signers import SimpleSigner
 from api import app
+from flask import request
 
-
-# signer_blp = Blueprint('sign',__name__)
 
 # https://pyhanko.readthedocs.io/en/latest/lib-guide/signing.html#text-based-stamps
-@app.route("/sign_pdf")
-def sign_pdf(input_path,subject_name,serial_number):
+@app.route("/signpdf")
+def signpdf():
+    data = request.get_json()
+    subject_name = data["data"].get('subject_name')
+    serial_number = data["data"].get('serial_number')
+    input_path = data["data"].get('input_path')
+
     cs12path = "./resources/container.pfx"
     create_keys(subject_name,serial_number,cs12path)
 

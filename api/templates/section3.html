@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.24/dist/full.min.css" rel="stylesheet" type="text/css" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axiomin.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+</head>
+
+<body class="min-h-[100vh] w-[100vw] flex flex-col justify-center items-center">
+	<h3>How would you like to sign section 3?</h3>
+	<div class="collapse bg-base-200">
+		<input type="radio" name="my-accordion-1" checked="checked" />
+		<div class="collapse-title text-xl font-medium">
+			Attestation and Signature
+		</div>
+		<div class="collapse-content">
+			<p>
+				On behalf of the above-specified company, I attest that [software producer] presently makes
+				consistent use of the following practices, derived from the secure software development
+				framework (SSDF),4 in developing the software identified in Section I:
+				1) The software is developed and built in secure environments. Those environments are secured
+				by the following actions, at a minimum:
+				a) Separating and protecting each environment involved in developing and building
+				software;
+				b) Regularly logging, monitoring, and auditing trust relationships used for authorization and
+				access:
+				i) to any software development and build environments; and
+				ii) among components within each environment;
+				c) Enforcing multi-factor authentication and conditional access across the environments
+				relevant to developing and building software in a manner that minimizes security risk;
+				d) Taking consistent and reasonable steps to document, as well as minimize use or inclusion
+				of software products that create undue risk within the environments used to develop and
+				build software;
+				e) Encrypting sensitive data, such as credentials, to the extent practicable and based on risk;
+				f) Implementing defensive cybersecurity practices, including continuous monitoring of
+				operations and alerts and, as necessary, responding to suspected and confirmed cyber
+				incidents;
+				2) The software producer has made a good-faith effort to maintain trusted source code supply
+				chains by employing automated tools or comparable processes to address the security of
+				internal code and third-party components and manage related vulnerabilities;
+				3) The software producer maintains provenance for internal code and third-party components
+				incorporated into the software;
+				4) The software producer employs automated tools or comparable processes that check for
+				security vulnerabilities. In addition:
+				a) The software producer operates these processes on an ongoing basis and, at a minimum,
+				prior to product, version, or update releases;
+				b) The software producer has a policy or process to address discovered security
+				vulnerabilities prior to product release; and
+				c) The software producer operates a vulnerability disclosure program and accepts, reviews,
+				and addresses disclosed software vulnerabilities in a timely fashion and according to any
+				timelines specified in the vulnerability disclosure program or applicable policies.
+			</p>
+			<input type="checkbox" id="accept-terms" name="accept-terms">
+			<label>To the best of my knowledge, I attest that all requirements outlined above are consistently
+				maintained and satisfied. I further attest the company will notify all impacted agencies if
+				conformance to any element of this attestation is no longer valid.</label>
+			<p>Signature of CEO or COO and Date (YYYY-MM-DD):</p>
+		</div>
+	</div>
+
+	<div class="collapse bg-base-200">
+		<input type="radio" name="my-accordion-1" />
+		<div class="collapse-title text-xl font-medium">
+			Attestation by Third Party
+		</div>
+		<div class="collapse-content">
+			<input type="checkbox" id="third-party-terms" name="accept-terms">
+			<label>A Third Party Assessor Organization (3PAO), either FedRAMP-certified or approved in
+				writing by an appropriate agency official, has evaluated our conformance with all elements in
+				this form. The 3PAO used relevant NIST Guidance that includes all elements outlined in this
+				form as part of the assessment baseline. The assessment is attached.</label>
+		</div>
+		<input id="third-party-file" type="file" class="file-input file-input-bordered w-full max-w-xs" />
+	</div>
+	<button id="submitSection3" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Entrar</button>
+
+</body>
+
+</html>
+
+<script>
+	$("#submitSection3").on("click", () => {
+
+		let acceptTerms = $("#accept-terms").val();
+		let signature = $("#signature").val();
+		let thirdPartyTerms = $("#third-party-terms").val();
+		let file = $("#third-party-file").val();
+
+		axios.post(`/api/submitSection3`, {
+			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
+			data: {
+				acceptTerms: acceptTerms,
+				signature: signature,
+				thirdPartyTerms: thirdPartyTerms,
+				file: file
+			},
+		}).then((response) => {
+
+			let code = response.data["code"];
+
+			if (code == "1") {
+				window.location.replace("/dashboard");
+			} else {
+				alert("Erro!");
+			}
+		});
+
+	}); 
+</script>

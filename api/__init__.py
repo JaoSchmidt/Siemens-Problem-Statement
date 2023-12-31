@@ -2,9 +2,10 @@ import sys
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import jwt
 import mysql.connector
-#import hashlib
 
 app = Flask(__name__)
+
+import api.pdf_signer
 
 app.secret_key = "jaojaojao"
 

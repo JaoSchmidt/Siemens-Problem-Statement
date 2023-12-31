@@ -16,3 +16,14 @@ exclude = '''
   | dist
 )/
 '''
+[project]
+name = "api"
+description = "Lovely"
+dependencies = [
+	"flask","pyjwt","mysql-connector-python"
+]
+version="0.1.0"
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"

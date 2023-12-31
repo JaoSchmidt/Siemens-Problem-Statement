@@ -146,6 +146,68 @@ def getAttestationAlert():
     return render_template('/components/attestationAlert.html', attestations=res)
 
 
+##### Attestation Form
+@app.route('/api/components/chooseProduct', methods=['POST'])
+def newAttestationForm():
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    sql = "SELECT PRODUCT_ID, VERSION_ID FROM PRODUCT_VERSION;"
+
+    cursor.execute(sql)
+    res = cursor.fetchall()
+
+    return render_template('/components/newAttestationForm/chooseProduct.html', products=res)
+
+
+@app.route('/api/checkProductsHasAttestation', methods=['POST'])
+def checkProductsHasAttestation():
+     
+    data = request.get_json()
+    products = data["data"].get('products')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    hasAttestation = []
+
+    for p in products:
+        splited = p.split('_')
+        sql = "SELECT FK_ATTESTATION_ID_PV FROM PRODUCT_VERSION WHERE PRODUCT_ID = %s AND VERSION_ID = %s LIMIT 1;"
+        params=[splited[0], splited[1]]
+        cursor.execute(sql, params)
+
+        res = cursor.fetchone()
+        ## @return => INT || NULL, 1 ou null
+        if res[0] == 1:
+            hasAttestation.append( [splited[0],splited[1]] )
+
+    if len(hasAttestation) > 0:
+        return { "array": hasAttestation, "code": "-1" }
+    else:
+        return { "code": "1" }
+
+@app.route('/api/assignUser', methods=['POST'])
+def assignUser():
+
+    data = request.get_json()
+    products = data["data"].get('products')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    sql = "SELECT USERNAME FROM USERS;"
+    cursor.execute(sql)
+
+    res = cursor.fetchall()
+
+    return render_template('/components/newAttestationForm/assignUser.html', products=products, users=res)
+    
+
+    
+
+
 """ @app.route('/submit_form', methods=['POST'])
 def submit_form():
     try:

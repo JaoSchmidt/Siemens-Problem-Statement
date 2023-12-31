@@ -1,0 +1,124 @@
+<div class="flex flex-col">
+
+  <div role="tablist" class="tabs tabs-boxed">
+    <a role="tab" class="tab">Products</a>
+    <a role="tab" class="tab tab-active">Assign Users</a>
+    <a role="tab" class="tab">Confirm</a>
+  </div>
+
+  <div class="flex flex-col my-4 text-white">
+    <span>Selected Products:</span>
+    {% for p in products %}
+    <span>{{ p }}</span>
+    {% endfor %}
+  </div>
+
+    <div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1">
+        <input type="radio" name="my-accordion-2" />  
+        <div class="collapse-title text-xl font-medium">
+          Section I
+        </div>
+        <div class="collapse-content"> 
+            
+            <div class="overflow-x-auto">
+
+                <button class="btn btn-success" s="s1" onclick="userListHandler(this)">Add User</button>
+
+                <table class="table">
+
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>                  
+                    <tr class="hover" id="s1">
+                      <th></th>
+                    </tr>
+                  </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+    
+    <div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1"> 
+        <input type="radio" name="my-accordion-2" /> 
+        <div class="collapse-title text-xl font-medium">
+          Section II
+        </div>
+        <div class="collapse-content">
+          
+          <button class="btn btn-success" onclick="userListHandler">Add User</button>
+
+        </div>
+    </div>
+
+    
+    <div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1">
+        <input type="radio" name="my-accordion-2" /> 
+        <div class="collapse-title text-xl font-medium">
+          Section III
+        </div>
+        <div class="collapse-content"> 
+          
+          <button class="btn btn-success" onclick="userListHandler">Add User</button>
+
+        </div>
+    </div>
+
+    <div class="overflow-x-auto h-96 hidden my-4" id="userList">
+      <table class="table table-pin-rows">
+          <tbody>
+          {% for u in users %}
+          <tr>
+              <td>{{ u[0] }}</td>
+              <td><button class="btn btn-success" u="{{ u[0] }}" onclick="assignUserHandler">Assign</button></td>
+          </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    </div>
+
+</div>
+
+
+
+
+<script>
+
+  function userListHandler(e) {
+
+    let section_target = $(e).attr("s");
+
+    $("#userList").attr("s", section_target);
+
+    //userList.showModal();
+    $("#userList").css("display", "flex");
+
+  }
+
+  
+  function assignUserHandler(e) {
+
+    let section_target = $("#userList").attr("s");
+    let username = $(e.currentTarget).attr("u");
+    
+    jQuery(`
+    <td>${username}<button class="btn btn-error removeUser">Remove</button></td>
+    `).appendTo( $(`#${section_target}`) );
+
+  }
+
+
+  $(".removeUser").on("click", (e) => {
+
+    $(e.currentTarget).parent().remove();
+
+  });
+
+</script>

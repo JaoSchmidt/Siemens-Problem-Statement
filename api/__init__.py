@@ -1,4 +1,3 @@
-import sys
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import jwt
 import mysql.connector
@@ -6,6 +5,7 @@ import mysql.connector
 app = Flask(__name__)
 
 import api.pdf_signer
+import api.renderSections
 
 app.secret_key = "jaojaojao"
 

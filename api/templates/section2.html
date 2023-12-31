@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.24/dist/full.min.css" rel="stylesheet" type="text/css" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+</head>
+
+<body class="min-h-[100vh] w-[100vw] flex flex-col justify-center items-center">
+	<div class="flex flex-col w-full">
+		<div class="grid h-20 card bg-base-300 rounded-box place-items-center">
+			<input id="companyName" class="input input-primary my-2 w-64" type="text" placeholder="Company Name"
+				value={{form1.companyName}}>
+			<input id="address" class="input input-primary my-2 w-64" type="text" placeholder="Address"
+				value={{form1.address}}>
+			<input id="city" class="input input-primary my-2 w-64" type="text" placeholder="City" value={{form1.city}}>
+			<input id="stateProvince" class="input input-primary my-2 w-64" type="text" placeholder="State or Province"
+				value={{form1.stateProvince}}>
+			<input id="postalCode" class="input input-primary my-2 w-64" type="text" placeholder="Postal Code"
+				value={{form1.postalCode}}>
+			<input id="country" class="input input-primary my-2 w-64" type="text" placeholder="Country"
+				value={{form1.country}}>
+			<input id="email" class="input input-primary my-2 w-64" type="text" placeholder="Email" value={{form1.email}}>
+
+		</div>
+		<div class="divider"></div>
+		<div class="grid h-20 card bg-base-300 rounded-box place-items-center">
+
+			<input id="name" class="input input-primary my-2 w-64" type="text" placeholder="Company Name"
+				value={{form2.name}}>
+			<input id="title" class="input input-primary my-2 w-64" type="text" placeholder="Title" value={{form2.title}}>
+			<input id="contactAddress" class="input input-primary my-2 w-64" type="text" placeholder="Contact Addres"
+				value={{form2.contactAddress}}>
+			<input id="phoneNumber" class="input input-primary my-2 w-64" type="text" placeholder="Phone Number"
+				value={{form2.phoneNumber}}>
+			<input id="email" class="input input-primary my-2 w-64" type="text" placeholder="Email" value={{form2.email}}>
+		</div>
+	</div>
+
+	<button id="section2submit" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Submit</button>
+</body>
+
+</html>
+
+<script>
+	$("#section2submit").on("click", () => {
+
+		let companyName = $("#companyName").val();
+
+		axios.post(`/api/section2`, {
+			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
+			data: {
+				username: username,
+				pass: password
+			},
+		}).then((response) => {
+
+			let code = response.data["code"];
+			let user = response.data["user"];
+
+			if (code == "1") {
+				document.cookie = "user=" + user;
+				window.location.replace("/dashboard");
+			} else {
+				alert("Credenciais Incorretas ou usuário não existe!");
+			}
+		});
+
+	}); 
+</script>

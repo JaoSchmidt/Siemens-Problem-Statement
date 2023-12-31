@@ -54,7 +54,7 @@
 				and addresses disclosed software vulnerabilities in a timely fashion and according to any
 				timelines specified in the vulnerability disclosure program or applicable policies.
 			</p>
-			<input type="checkbox" id="accept-terms" name="accept-terms">
+			<input type="checkbox" id="accept-terms" name="accept-terms" value={{terms.acceptTerms}}>
 			<label>To the best of my knowledge, I attest that all requirements outlined above are consistently
 				maintained and satisfied. I further attest the company will notify all impacted agencies if
 				conformance to any element of this attestation is no longer valid.</label>
@@ -68,21 +68,41 @@
 			Attestation by Third Party
 		</div>
 		<div class="collapse-content">
-			<input type="checkbox" id="third-party-terms" name="accept-terms">
+			<input type="checkbox" id="third-party-terms" name="accept-terms" value={{terms.thirdPartyTerms}}>
 			<label>A Third Party Assessor Organization (3PAO), either FedRAMP-certified or approved in
 				writing by an appropriate agency official, has evaluated our conformance with all elements in
 				this form. The 3PAO used relevant NIST Guidance that includes all elements outlined in this
 				form as part of the assessment baseline. The assessment is attached.</label>
 		</div>
+		{ % if terms.file != None % }
+		<p>Download current file</p>
+		<button id="downloadTermsFile" class="btn btn-neutral">Neutral</button>
+		Replace File:
 		<input id="third-party-file" type="file" class="file-input file-input-bordered w-full max-w-xs" />
+		{ % else % }
+		<input id="third-party-file" type="file" class="file-input file-input-bordered w-full max-w-xs" />
+		{ % endif % }
 	</div>
-	<button id="submitSection3" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Entrar</button>
+	<button id="submitSection3" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Submit</button>
 
 </body>
 
 </html>
 
 <script>
+
+	$("#downloadTermsFile").on("click", () => {
+		axios.get(`/api/downloadTermsFile`, {
+			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*'},
+		}).then((response) => {
+
+			let code = response.data["code"];
+
+			if (code != "1") {
+				alert("Erro!");
+			}
+		});
+	});
 	$("#submitSection3").on("click", () => {
 
 		let acceptTerms = $("#accept-terms").val();

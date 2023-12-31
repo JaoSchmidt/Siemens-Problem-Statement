@@ -9,10 +9,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 </head>
-<body data-theme="sunset" class="min-h-[100vh] w-[100vw] flex flex-col">
+<body data-theme="sunset" class="min-h-[100vh] w-[100vw] flex flex-col relative">
 
   <header class="h-[80px] w-full flex flex-row items-center justify-center">
-    <button class="btn btn-primary mx-4 text-white"> Generate New Attestation </button>
+    <button id="generateAttestationHandler" class="btn btn-primary mx-4 text-white"> Generate New Attestation </button>
     <button id="getProductsHandler" class="btn btn-primary mx-4 text-white"> Products </button>
     <button class="btn btn-primary mx-4 text-white"> Attestations </button>
   </header>
@@ -28,10 +28,6 @@
 
   <dialog id="menuModal" class="modal">
     <div class="modal-box flex flex-col max-h-[80vh] min-w-fit">
-
-        <header class="h-[50px] w-full flex flex-row items-center">
-
-        </header>
 
         <div id="menuModalContent" class="w-auto flex flex-col flex-1 overflow-y-auto">
         
@@ -49,6 +45,25 @@
 </html>
 <script>
 
+  $("#generateAttestationHandler").on("click", () => {
+
+    $("#modalBoxLoader").css("display", "flex");
+
+    axios.post(`/api/components/chooseProduct`, {
+    headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
+    }).then( (response) => {
+
+      $("#menuModalContent").html('');
+
+      $("#modalBoxLoader").css("display", "none");
+
+      jQuery(response.data).appendTo( $("#menuModalContent") );
+      
+      menuModal.showModal()
+
+    });
+
+  });
 
   $("#getProductsHandler").on("click", () => {
 

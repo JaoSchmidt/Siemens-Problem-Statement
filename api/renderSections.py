@@ -44,8 +44,7 @@ def exploreOldAttestations(product_id):
     else:
         return { "code": "-1" }
 
-@app.route('/section2',methods=['GET'])
-def section2():
+def section2(section_id, attestation_id):
 
     
     # data = request.get_json()
@@ -77,15 +76,17 @@ def section2():
         "title":"Thorn Princess",
         "contactAddress":"westalis",
         "phoneNumber":666,
-        "website":"thorn@strix.org",
+        "email":"thorn@strix.org",
         }
 
     return render_template('/components/newAttestationForm/sections/section2.html',
                            form1=softwareProducerInfo,
-                           form2=primaryContactInfo)
+                           form2=primaryContactInfo,
+                           section_id=section_id,
+                           attestation_id=attestation_id
+                           )
 
-@app.route('/section3')
-def section3():
+def section3(section_id, attestation_id):
     terms = {
         "acceptedTerms": True,
         "signature": "asefioeur09",
@@ -93,9 +94,13 @@ def section3():
         "file": None,
         }
 
-    return render_template('/components/newAttestationForm/sections/section3.html', terms=terms)
+    return render_template('/components/newAttestationForm/sections/section3.html', 
+                           terms=terms,
+                           section_id=section_id,
+                           attestation_id=attestation_id
+                           )
 
-@app.route('/section3DownloadFile')
+@app.route('/api/section3DownloadFile')
 def section3DownloadFile():
     data = request.get_json()
     attestation_id = data["data"].get('attestation_id')
@@ -112,12 +117,12 @@ def section3DownloadFile():
     file_like_data = io.BytesIO(data[0])
     return send_file(file_like_data)
 
-@app.route('/submitSection3ThidParty')
+@app.route('/api/submitSection3ThidParty')
 def submitSection3ThidParty():
     data = request.get_json()
-    user_id = data["data"].get('user_id')
-    section_id = data["data"].get('section')
-    attestation_id = data["data"].get('attestation')
+    user_id = request.cookies.get('user')
+    section_id = data["data"].get('section_id')
+    attestation_id = data["data"].get('attestation_id')
 
     acceptTerms = data["data"].get('acceptTerms')
 
@@ -153,10 +158,10 @@ def submitSection3ThidParty():
     return 'OK'
 
 
-@app.route('/submitSection3')
+@app.route('/api/submitSection3')
 def submitSection3():
     data = request.get_json()
-    user_id = data["data"].get('user_id')
+    user_id = request.cookies.get('user')
     section_id = data["data"].get('section')
     attestation_id = data["data"].get('attestation')
 
@@ -196,14 +201,14 @@ def submitSection3():
         return 'ERROR'
     return 'OK'
 
-@app.route('/submitSection2',methods=['POST'])
+@app.route('/api/submitSection2',methods=['POST'])
 def submitSection2():
     # Pd colocar filtro aqui depois para checar se cada section tem pelo menos 1 usuario
 
     data = request.get_json()
-    attestation_id = data["data"].get('attestation')
-    user_id = data["data"].get('user_id')
-    section_id = data["data"].get('section')
+    attestation_id = data["data"].get('attestation_id')
+    section_id = data["data"].get('section_id')
+    user_id = request.cookies.get('user')
 
     companyName = data["data"].get('companyName')
     address = data["data"].get('address')
@@ -220,18 +225,18 @@ def submitSection2():
  
     sql = """
     UPDATE ATTESTATION SET
-        COMPANY_NAME = %s,
-        ADDRESS = %s,
-        CITY = %s,
-        STATE_OR_PROVINCE = %s,
+        COMPANY_NAME = "%s",
+        ADDRESS = "%s",
+        CITY = "%s",
+        STATE_OR_PROVINCE = "%s",
         POSTAL_CODE = %s,
-        COUNTRY = %s,
-        COMPANY_WEBSITE = %s,
-        NAME = %s,
-        TITLE = %s,
-        CONTACT_ADDRESS = %s,
+        COUNTRY = "%s",
+        COMPANY_WEBSITE = "%s",
+        NAME = "%s",
+        TITLE = "%s",
+        CONTACT_ADDRESS = "%s",
         PHONE_NUMBER = %s,
-        EMAIL = %s,
+        EMAIL = "%s"
     WHERE ID = %s
     """
     params = [
@@ -249,10 +254,11 @@ def submitSection2():
         email,
         attestation_id
     ]
+    print(params,sys.stdout)
 
     none_indexes = [index for index, value in enumerate(params) if value is None]
     if len(none_indexes) > 0:
-        return 'ERROR boxes {none_indexes} are Null'
+        return f'ERROR indexes {none_indexes} are Null'
 
     conn = mysql.connector.connect(**DATABASE_CONFIG)
     cursor = conn.cursor()
@@ -268,10 +274,10 @@ def submitSection2():
         AND USER_ID_AXFS = %s
         """
         params = [attestation_id, section_id, user_id]
-        cursor.execute(sql, params)
-        conn.commit()
+        # cursor.execute(sql, params)
+        # conn.commit()
 
     except mysql.connector.Error as err:
         conn.rollback()
-        return 'ERROR'
+        return err.msg
     return 'OK'

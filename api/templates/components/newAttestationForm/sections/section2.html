@@ -1,87 +1,72 @@
-<!doctype html>
-<html>
+<div class="flex flex-col w-full items-center" id="sectionForm" s="{{ section_id }}" a="{{ attestation_id }}">
+	<div class="grid h-auto card w-fit p-8 bg-base-300 rounded-box place-items-center">
+		<h3>1. Software Producer Information</h3>
+		<div class="flex flex-row items-center">
+			<label class="w-[300px]">Company Name:</label>
+			<input id="companyName" class="input input-primary my-2 w-64" type="text" placeholder="Company Name"
+				value="{{form1.companyName}}">
+		</div>
+		<div class="flex flex-row items-center">
+			<label class="w-[300px]">Address:</label>
+			<input id="address" class="input input-primary my-2 w-64" type="text" placeholder="Address"
+				value="{{form1.address}}">
+		</div>
+		<div class="flex flex-row items-center">
+			<label class="w-[300px]">City:</label>
+			<input id="city" class="input input-primary my-2 w-64" type="text" placeholder="City" value="{{form1.city}}">
+		</div>
+		<div class="flex flex-row items-center">
+			<label class="w-[300px]">State or Province:</label>
+			<input id="stateProvince" class="input input-primary my-2 w-64" type="text" placeholder="State or Province"
+				value="{{form1.stateProvince}}">
+		</div>
+		<div class="flex flex-row items-center">
+			<label class="w-[300px]">Postal Code:</label>
+			<input id="postalCode" class="input input-primary my-2 w-64" type="text" placeholder="Postal Code"
+				value="{{form1.postalCode}}">
+		</div>
+		<div class="flex flex-row items-center">
+			<label class="w-[300px]">Country:</label>
+			<input id="country" class="input input-primary my-2 w-64" type="text" placeholder="Country"
+				value="{{form1.country}}">
+		</div>
+		<div class="flex flex-row items-center">
+			<label class="w-[300px]">Email:</label>
+			<input id="website" class="input input-primary my-2 w-64" type="text" placeholder="Company Website"
+				value="{{form1.website}}">
+		</div>
+		<div class="divider"></div>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.24/dist/full.min.css" rel="stylesheet" type="text/css" />
-	<script src="https://cdn.tailwindcss.com"></script>
-	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-</head>
-
-<body class="min-h-[100vh] w-[100vw] flex flex-col justify-center items-center">
-	<div class="flex flex-col w-full items-center">
 		<div class="grid h-auto card w-fit p-8 bg-base-300 rounded-box place-items-center">
-			<h3>1. Software Producer Information</h3>
+			<h3>2. Primary Contact for this Document and Related</h3>
+			<h3>Information (may be an individual,role, or group):</h3>
 			<div class="flex flex-row items-center">
-				<label class="w-[300px]">Company Name:</label>
-				<input id="companyName" class="input input-primary my-2 w-64" type="text" placeholder="Company Name"
-					value={{form1.companyName}}>
+				<label class="w-[300px]">Name:</label>
+				<input id="name" class="input input-primary my-2 w-64" type="text" placeholder="Name" value="{{form2.name}}">
 			</div>
 			<div class="flex flex-row items-center">
-				<label class="w-[300px]">Address:</label>
-				<input id="address" class="input input-primary my-2 w-64" type="text" placeholder="Address"
-					value={{form1.address}}>
+				<label class="w-[300px]">Title:</label>
+				<input id="title" class="input input-primary my-2 w-64" type="text" placeholder="Title" value="{{form2.title}}">
 			</div>
 			<div class="flex flex-row items-center">
-				<label class="w-[300px]">City:</label>
-				<input id="city" class="input input-primary my-2 w-64" type="text" placeholder="City" value={{form1.city}}>
+				<label class="w-[300px]">Contact Address:</label>
+				<input id="contactAddress" class="input input-primary my-2 w-64" type="text" placeholder="Contact Addres"
+					value="{{form2.contactAddress}}">
 			</div>
 			<div class="flex flex-row items-center">
-				<label class="w-[300px]">State or Province:</label>
-				<input id="stateProvince" class="input input-primary my-2 w-64" type="text" placeholder="State or Province"
-					value={{form1.stateProvince}}>
-			</div>
-			<div class="flex flex-row items-center">
-				<label class="w-[300px]">Postal Code:</label>
-				<input id="postalCode" class="input input-primary my-2 w-64" type="text" placeholder="Postal Code"
-					value={{form1.postalCode}}>
-			</div>
-			<div class="flex flex-row items-center">
-				<label class="w-[300px]">Country:</label>
-				<input id="country" class="input input-primary my-2 w-64" type="text" placeholder="Country"
-					value={{form1.country}}>
+				<label class="w-[300px]">Phone Number:</label>
+				<input id="phoneNumber" class="input input-primary my-2 w-64" type="text" placeholder="Phone Number"
+					value="{{form2.phoneNumber}}">
 			</div>
 			<div class="flex flex-row items-center">
 				<label class="w-[300px]">Email:</label>
-				<input id="website" class="input input-primary my-2 w-64" type="text" placeholder="Company Website"
-					value={{form1.website}}>
-			</div>
-			<div class="divider"></div>
-
-			<div class="grid h-auto card w-fit p-8 bg-base-300 rounded-box place-items-center">
-				<h3>2. Primary Contact for this Document and Related</h3>
-				<h3>Information (may be an individual,role, or group):</h3>
-				<div class="flex flex-row items-center">
-					<label class="w-[300px]">Name:</label>
-					<input id="name" class="input input-primary my-2 w-64" type="text" placeholder="Name" value={{form2.name}}>
-				</div>
-				<div class="flex flex-row items-center">
-					<label class="w-[300px]">Title:</label>
-					<input id="title" class="input input-primary my-2 w-64" type="text" placeholder="Title" value={{form2.title}}>
-				</div>
-				<div class="flex flex-row items-center">
-					<label class="w-[300px]">Contact Address:</label>
-					<input id="contactAddress" class="input input-primary my-2 w-64" type="text" placeholder="Contact Addres"
-						value={{form2.contactAddress}}>
-				</div>
-				<div class="flex flex-row items-center">
-					<label class="w-[300px]">Phone Number:</label>
-					<input id="phoneNumber" class="input input-primary my-2 w-64" type="text" placeholder="Phone Number"
-						value={{form2.phoneNumber}}>
-				</div>
-				<div class="flex flex-row items-center">
-					<label class="w-[300px]">Email:</label>
-					<input id="email" class="input input-primary my-2 w-64" type="text" placeholder="Email" value={{form2.email}}>
-				</div>
+				<input id="email" class="input input-primary my-2 w-64" type="text" placeholder="Email" value="{{form2.email}}">
 			</div>
 		</div>
+	</div>
+</div>
 
-		<button id="section2submit" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Submit</button>
-</body>
-
-</html>
+<button id="section2submit" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Submit</button>
 
 <script>
 	$("#section2submit").on("click", () => {
@@ -114,6 +99,8 @@
 				contactAddress: contactAddress,
 				phoneNumber: phoneNumber,
 				email: email,
+				section_id: $("#sectionForm").attr("s"),
+				attestation_id: $("#sectionForm").attr("a"),
 			},
 		}).then((response) => {
 

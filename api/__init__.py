@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for
 import jwt
 import mysql.connector
 import random
+import sys
 
 app = Flask(__name__)
 
@@ -353,22 +354,23 @@ def getForm():
     conn = mysql.connector.connect(**DATABASE_CONFIG)
     cursor = conn.cursor()
 
-    if section == 1:
-        sql = """
-        SELECT PRODUCT_ID,VERSION_ID,RELEASE_PUBLISH_DATE FROM PRODUCT_VERSION
-        WHERE FK_ATTESTATION_ID_PV = %s
-        """
-        params = [attestation]
-        cursor.execute(sql, params)
+    print(section,sys.stdout)
+    sql = """
+    SELECT PRODUCT_ID,VERSION_ID,RELEASE_PUBLISH_DATE FROM PRODUCT_VERSION
+    WHERE FK_ATTESTATION_ID_PV = %s
+    """
+    params = [attestation]
+    cursor.execute(sql, params)
 
-        res = cursor.fetchall()
+    res = cursor.fetchall()
 
+    if section == "1":
         return render_template('/components/newAttestationForm/sections/section1.html', products=res, section=section, attestation=attestation)
-    
-    elif section == 2:
-        return
-    elif section == 3:
-        return
+    elif section == "2":
+        return api.renderSections.section2(section_id=section, attestation_id=attestation)
+    elif section == "3":
+        return api.renderSections.section3(section_id=section, attestation_id=attestation)
+    return "<a>Erro</a>"
 
 
 @app.route('/api/formSubmit', methods=['POST'])

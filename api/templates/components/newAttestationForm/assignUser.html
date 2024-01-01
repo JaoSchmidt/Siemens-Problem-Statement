@@ -9,9 +9,11 @@
   <div class="flex flex-col my-4 text-white">
     <span>Selected Products:</span>
     {% for p in products %}
-    <span>{{ p }}</span>
+    <span class="pv">{{ p }}</span>
     {% endfor %}
   </div>
+
+  <button class="btn btn-primary btn-md my-4" onclick="confirmUserAssignHandler()">Confirm selection</button>
 
     <div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1">
         <input type="radio" name="my-accordion-2" />  
@@ -130,7 +132,7 @@
       }
 
     }
-    console.log(addedUsers)
+    
 
     jQuery(`
     <tr>
@@ -145,6 +147,36 @@
     
 
   }
+
+  /*
+  JSON Body
+  {
+    users: addedUsers,
+    products: 
+  }
+
+  */
+
+  function confirmUserAssignHandler() {
+
+    var products_arr = [];
+    $(".pv").each( (i,e) => {
+      products_arr.push( $(e).text() );
+    });
+
+    console.log(addedUsers);
+
+    axios.post(`/api/createAttestation`, {
+    headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
+    data: {
+      users: addedUsers,
+      products: products_arr
+    },
+    }).then( (response) => {
+      console.log(response);
+    });
+
+  }  
 
 
 </script>

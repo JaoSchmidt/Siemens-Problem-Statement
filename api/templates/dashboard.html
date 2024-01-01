@@ -17,9 +17,18 @@
     <button class="btn btn-primary mx-4 text-white"> Attestations </button>
   </header>
 
-  <div id="adminAlerts" class="h-auto max-w-[20%] mt-10">
+  <main class="flex flex-row">
 
-  </div>
+    <div id="adminAlerts" class="h-auto max-w-[20%] mt-10">
+
+    </div>
+
+    <div id="toCompleteSectionsAlerts" class="h-auto max-w-[20%] mt-10 ml-auto">
+
+    </div>
+    
+  </main>
+  
 
   <div id="modalBoxLoader" class="hidden flex-col justify-center items-center fixed top-0 left-0 
   h-[100vh] w-[100vw] bg-[rgba(0,0,0,0.7)]">
@@ -94,20 +103,44 @@
   
   $(document).ready( () => {
 
+    var allLoaded = [];
+
     $("#modalBoxLoader").css("display", "flex");
     
-    axios.post(`/api/components/getAttestationAlert`, {
+    axios.post(`/api/getAttestationAlert`, {
     headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
     data: {
       user_id: getCookie('user') 
     },
     }).then( (response) => {
 
-      $("#modalBoxLoader").css("display", "none");
+      allLoaded.push(0);
+
+      if ( allLoaded.length == 2 ) {
+        $("#modalBoxLoader").css("display", "none");
+      }
 
       jQuery(response.data).appendTo( $("#adminAlerts") );
 
     });
+
+    axios.post(`/api/getUserIncompleteSections`, {
+    headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
+    data: {
+      user_id: getCookie('user') 
+    },
+    }).then( (response) => {
+
+      allLoaded.push(1);
+
+      if ( allLoaded.length == 2 ) {
+        $("#modalBoxLoader").css("display", "none");
+      }
+
+      jQuery(response.data).appendTo( $("#toCompleteSectionsAlerts") );
+
+    });
+
 
   });
 

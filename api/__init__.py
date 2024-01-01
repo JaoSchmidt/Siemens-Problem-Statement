@@ -330,8 +330,7 @@ def getUserIncompleteSections():
     cursor = conn.cursor()
 
     sql = """
-    SELECT PRODUCT_ID, VERSION_ID, ATTESTATION_ID_AXFS,FORM_SECTION_ID_AXFS FROM ATTESTATION_X_FORM_SECTIONS AXFS
-    JOIN PRODUCT_VERSION PV ON PV.FK_ATTESTATION_ID_PV = AXFS.ATTESTATION_ID_AXFS
+    SELECT ATTESTATION_ID_AXFS,FORM_SECTION_ID_AXFS FROM ATTESTATION_X_FORM_SECTIONS AXFS
     WHERE USER_ID_AXFS = %s
     AND USER_COMPLETED = 0
     """
@@ -348,8 +347,79 @@ def getUserIncompleteSections():
 def getForm():
 
     data = request.get_json()
-    return
+    attestation = data["data"].get('attestation')
+    section = data["data"].get('section')
 
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    sql = """
+    SELECT PRODUCT_ID,VERSION_ID,RELEASE_PUBLISH_DATE FROM PRODUCT_VERSION
+    WHERE FK_ATTESTATION_ID_PV = %s
+    """
+    params = [attestation]
+    cursor.execute(sql, params)
+
+    res = cursor.fetchall()
+
+    return render_template('/components/newAttestationForm/sections/section1.html', products=res, section=section, attestation=attestation)
+
+
+@app.route('/api/formSubmit', methods=['POST'])
+def formSubmit():
+
+    data = request.get_json()
+    type = data["data"].get('type')
+    attestation = data["data"].get('attestation')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    if type == 1:      
+        section = data["data"].get('section')
+        user_id = data["data"].get('user_id')
+        products = data["data"].get('products')
+        attestation_nature = data["data"].get('attestation_nature')
+        attestation_type = data["data"].get('attestation_type')
+
+        sql = """
+        UPDATE ATTESTATION
+        SET ATTESTATION_NATURE = %s, ATTESTATION_TYPE = %s
+        WHERE ID = %s
+        """
+        params = [attestation_nature, attestation_type, attestation]
+        cursor.execute(sql, params)
+        conn.commit()
+        
+        for p in products:
+            pId = p[0]
+            release_date = p[1] #if not '' else None
+            if release_date == '':
+                release_date = None
+
+            product_id, version_id = pId.split('_')
+
+            sql = """
+            UPDATE PRODUCT_VERSION
+            SET RELEASE_PUBLISH_DATE = %s
+            WHERE PRODUCT_ID = %s AND VERSION_ID = %s
+            """
+            params = [release_date, product_id, version_id]
+            cursor.execute(sql, params)
+            conn.commit()
+
+        sql = """
+        UPDATE ATTESTATION_X_FORM_SECTIONS
+        SET USER_COMPLETED = 1
+        WHERE ATTESTATION_ID_AXFS = %s
+        AND FORM_SECTION_ID_AXFS = %s
+        AND USER_ID_AXFS = %s
+        """
+        params = [attestation, section, user_id]
+        cursor.execute(sql, params)
+        conn.commit()
+    
+    return 'OK'
 
 
 """ @app.route('/submit_form', methods=['POST'])

@@ -2,11 +2,11 @@
 <div class="collapse collapse-arrow bg-secondary text-white my-2">
     <input type="radio" name="my-accordion-2" /> 
     <div class="collapse-title text-xl font-medium">
-        Assigned Section to Complete | Product: {{ a[0] }} Version: {{ a[1] }}
+        Assigned Section to Complete
     </div>
     <div class="collapse-content flex flex-row"> 
-        <span class="font-[800] text-sm">Attestation Number: {{ a[2] }} Section: {{ a[3] }} </span>
-        <button onclick="openForm(this)" class="btn btn-success" a="{{ a[2] }}" s="{{ a[3] }}" pId="{{ a[0]+'_'+a[1] }}">Open Form</button>
+        <span class="font-[800] text-sm">Attestation Number: {{ a[0] }} Section: {{ a[1] }} </span>
+        <button onclick="openForm(this)" class="btn btn-success" a="{{ a[0] }}" s="{{ a[1] }}">Open Form</button>
     </div>
 </div>
 {% endfor %}
@@ -15,14 +15,17 @@
 
     function openForm(e) {
 
-        let 
+        let attestation = $(e).attr("a");
+        let section = $(e).attr("s");
+        let pId = $(e).attr("pId");
 
         $("#modalBoxLoader").css("display", "flex");
 
         axios.post(`/api/getForm`, {
         headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
         data: {
-            
+            attestation: attestation,
+            section: section //1 => Section I, 2 => Section II, 3 => Section III
         },
         }).then( (response) => {
 

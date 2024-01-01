@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import jwt
 import mysql.connector
+import random
 
 app = Flask(__name__)
 
@@ -124,7 +125,7 @@ def showProducts():
     return render_template('/components/showProducts.html', products=res_data)
 
 ##### Get PPSSO products where ATTESTATION_ID IS NULL
-@app.route('/api/components/getAttestationAlert', methods=['POST'])
+@app.route('/api/getAttestationAlert', methods=['POST'])
 def getAttestationAlert():
 
     data = request.get_json()
@@ -181,7 +182,7 @@ def checkProductsHasAttestation():
 
         res = cursor.fetchone()
         ## @return => INT || NULL, 1 ou null
-        if res[0] == 1:
+        if res[0] is not None:
             hasAttestation.append( [splited[0],splited[1]] )
 
     if len(hasAttestation) > 0:
@@ -204,9 +205,138 @@ def assignUser():
     res = cursor.fetchall()
 
     return render_template('/components/newAttestationForm/assignUser.html', products=products, users=res)
+
+
+
+
+
+##### Insert Attestation X Sections X Users Assigned
+@app.route('/api/createAttestation', methods=['POST'])
+def createAttestation():
+
+    # Pd colocar filtro aqui depois para checar se cada section tem pelo menos 1 usuario
+
+    data = request.get_json()
+    products = data["data"].get('products')
+    users = data["data"].get('users')
+
+    s1_users = []
+    s2_users = []
+    s3_users = []
+    for u in users:
+        if u == "s1":
+            for i in users["s1"]:
+                s1_users.append(i)
+        if u == "s2":
+            for i in users["s2"]:
+                s2_users.append(i)
+        if u == "s3":
+            for i in users["s3"]:
+                s3_users.append(i)
+
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    faults = []
+
+    # Create Attestation
+    new_id = random.randint(0,9)*random.randint(0,100)*random.randint(0,999)
+
+    sql = "INSERT INTO ATTESTATION(ID, CREATED_AT) VALUES(%s, NOW());"
+    params = [new_id]
+    cursor.execute(sql, params)
+    conn.commit()
+
+    for u in s1_users :
+        sql = "SELECT ID FROM USERS WHERE USERNAME = %s"
+        params = [u]
+        cursor.execute(sql, params)
+
+        user_id = cursor.fetchone()[0]
+
+        sql = """
+        INSERT INTO ATTESTATION_X_FORM_SECTIONS( ATTESTATION_ID_AXFS, FORM_SECTION_ID_AXFS, USER_ID_AXFS )
+        VALUES( %s, %s, %s )
+        """
+        params = [new_id,1,user_id]
+        cursor.execute(sql, params)
+
+    for u in s2_users:
+        sql = "SELECT ID FROM USERS WHERE USERNAME = %s"
+        params = [u]
+        cursor.execute(sql, params)
+
+        user_id = cursor.fetchone()[0]
+
+        sql = """
+        INSERT INTO ATTESTATION_X_FORM_SECTIONS( ATTESTATION_ID_AXFS, FORM_SECTION_ID_AXFS, USER_ID_AXFS )
+        VALUES( %s, %s, %s )
+        """
+        params = [new_id,2,user_id]
+        cursor.execute(sql, params)
+
+    for u in s3_users:
+        sql = "SELECT ID FROM USERS WHERE USERNAME = %s"
+        params = [u]
+        cursor.execute(sql, params)
+
+        user_id = cursor.fetchone()[0]
+
+        sql = """
+        INSERT INTO ATTESTATION_X_FORM_SECTIONS( ATTESTATION_ID_AXFS, FORM_SECTION_ID_AXFS, USER_ID_AXFS )
+        VALUES( %s, %s, %s )
+        """
+        params = [new_id,3,user_id]
+        cursor.execute(sql, params)
+
+    for p in products:
+        splited = p.split('_')
+        product_id = splited[0]
+        version_id = splited[1]
+
+        sql = """
+        UPDATE PRODUCT_VERSION
+        SET FK_ATTESTATION_ID_PV = %s
+        WHERE PRODUCT_ID = %s
+        AND VERSION_ID = %s
+        """
+        params = [new_id,product_id,version_id]
+        cursor.execute(sql, params)
+        conn.commit()
+
+    return 'OK'
+
+@app.route('/api/getUserIncompleteSections', methods=['POST'])
+def getUserIncompleteSections():
+
+    data = request.get_json()
+    user_id = data["data"].get('user_id')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    sql = """
+    SELECT PRODUCT_ID, VERSION_ID, ATTESTATION_ID_AXFS,FORM_SECTION_ID_AXFS FROM ATTESTATION_X_FORM_SECTIONS AXFS
+    JOIN PRODUCT_VERSION PV ON PV.FK_ATTESTATION_ID_PV = AXFS.ATTESTATION_ID_AXFS
+    WHERE USER_ID_AXFS = %s
+    AND USER_COMPLETED = 0
+    """
+    params = [user_id]
+    cursor.execute(sql, params)
+
+    res = cursor.fetchall()
+
+    return render_template('/components/incompleteSectionAlert.html', incompletes=res)
     
 
-    
+##### GET FORM TEMPLATES
+@app.route('/api/getForm', methods=['POST'])
+def getForm():
+
+    data = request.get_json()
+    return
+
 
 
 """ @app.route('/submit_form', methods=['POST'])

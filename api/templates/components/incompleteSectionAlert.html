@@ -1,0 +1,41 @@
+{% for a in incompletes %}
+<div class="collapse collapse-arrow bg-secondary text-white my-2">
+    <input type="radio" name="my-accordion-2" /> 
+    <div class="collapse-title text-xl font-medium">
+        Assigned Section to Complete | Product: {{ a[0] }} Version: {{ a[1] }}
+    </div>
+    <div class="collapse-content flex flex-row"> 
+        <span class="font-[800] text-sm">Attestation Number: {{ a[2] }} Section: {{ a[3] }} </span>
+        <button onclick="openForm(this)" class="btn btn-success" a="{{ a[2] }}" s="{{ a[3] }}" pId="{{ a[0]+'_'+a[1] }}">Open Form</button>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+
+    function openForm(e) {
+
+        let 
+
+        $("#modalBoxLoader").css("display", "flex");
+
+        axios.post(`/api/getForm`, {
+        headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
+        data: {
+            
+        },
+        }).then( (response) => {
+
+            $("#menuModalContent").html('');
+
+            $("#modalBoxLoader").css("display", "none");
+
+            jQuery(response.data).appendTo( $("#menuModalContent") );
+
+            menuModal.showModal();
+
+        });
+
+    }
+
+</script>

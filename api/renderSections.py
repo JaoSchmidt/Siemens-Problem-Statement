@@ -1,4 +1,5 @@
 import io
+import sys
 from api import app
 from flask import render_template, send_file, request
 import mysql.connector
@@ -16,6 +17,20 @@ def section2():
 
     # data = request.get_json()
     # products = data["data"].get('products')
+    data = request.get_json()
+
+    attestation_id = data["data"].get('attestation_id')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    getFile = "SELECT * FROM ATTESTATION WHERE ID = %s;"
+
+    input=[attestation_id]
+    cursor.execute(getFile,input)
+
+
+    # print(helloworld(),sys.stderr)
 
     softwareProducerInfo = {
         "companyName": "Weyland-Yutani Corp",

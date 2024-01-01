@@ -23,6 +23,9 @@ DATABASE_CONFIG = {
     "database": "attestation"
 } """
 
+@app.route('/helloworld')
+def helloworld():
+    return "Hello World"
 
 @app.route('/')
 def main():

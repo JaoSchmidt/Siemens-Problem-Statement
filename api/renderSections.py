@@ -118,6 +118,10 @@ def submitSection2():
     # Pd colocar filtro aqui depois para checar se cada section tem pelo menos 1 usuario
 
     data = request.get_json()
+    attestation_id = data["data"].get('attestation')
+    user_id = data["data"].get('user_id')
+    section_id = data["data"].get('section')
+
     companyName = data["data"].get('companyName')
     address = data["data"].get('address')
     city = data["data"].get('city')
@@ -132,21 +136,20 @@ def submitSection2():
     email = data["data"].get('email')
  
     sql = """
-    INSERT INTO ATTESTATION (
-        COMPANY_NAME,
-        ADDRESS,
-        CITY,
-        STATE_OR_PROVINCE,
-        POSTAL_CODE,
-        COUNTRY,
-        COMPANY_WEBSITE,
-        NAME,
-        TITLE,
-        CONTACT_ADDRESS,
-        PHONE_NUMBER,
-        EMAIL,
-        )
-        VALUES( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+    UPDATE ATTESTATION SET
+        COMPANY_NAME = %s,
+        ADDRESS = %s,
+        CITY = %s,
+        STATE_OR_PROVINCE = %s,
+        POSTAL_CODE = %s,
+        COUNTRY = %s,
+        COMPANY_WEBSITE = %s,
+        NAME = %s,
+        TITLE = %s,
+        CONTACT_ADDRESS = %s,
+        PHONE_NUMBER = %s,
+        EMAIL = %s,
+    WHERE ID = %s
     """
     params = [
         companyName,
@@ -161,12 +164,30 @@ def submitSection2():
         contactAddress,
         phoneNumber,
         email,
+        attestation_id
     ]
+
+    none_indexes = [index for index, value in enumerate(params) if value is None]
+    if len(none_indexes) > 0:
+        return 'ERROR boxes {none_indexes} are Null'
 
     conn = mysql.connector.connect(**DATABASE_CONFIG)
     cursor = conn.cursor()
     try:
         cursor.execute(sql, params)
+        conn.commit()
+
+        sql = """
+        UPDATE ATTESTATION_X_FORM_SECTIONS
+        SET USER_COMPLETED = 1
+        WHERE ATTESTATION_ID_AXFS = %s
+        AND FORM_SECTION_ID_AXFS = %s
+        AND USER_ID_AXFS = %s
+        """
+        params = [attestation_id, section_id, user_id]
+        cursor.execute(sql, params)
+        conn.commit()
+
     except mysql.connector.Error as err:
         conn.rollback()
         return 'ERROR'

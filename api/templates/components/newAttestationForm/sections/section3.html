@@ -59,6 +59,8 @@
 				maintained and satisfied. I further attest the company will notify all impacted agencies if
 				conformance to any element of this attestation is no longer valid.</label>
 			<p>Signature of CEO or COO and Date (YYYY-MM-DD):</p>
+			<button id="submitSection3" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Submit and Sign
+				Document</button>
 		</div>
 	</div>
 
@@ -82,9 +84,10 @@
 			<p>Artifact/Addendum Description:</p>
 			<input id="third-party-file" type="file" class="file-input file-input-bordered w-full max-w-xs" />
 			{% endif %}
+			<button id="submitSection3ThirdParty" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8">
+				Submit</button>
 		</div>
 	</div>
-	<button id="submitSection3" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Submit</button>
 
 </body>
 
@@ -107,17 +110,11 @@
 	$("#submitSection3").on("click", () => {
 
 		let acceptTerms = $("#accept-terms").val();
-		let signature = $("#signature").val();
-		let thirdPartyTerms = $("#third-party-terms").val();
-		let file = $("#third-party-file").val();
 
 		axios.post(`/api/submitSection3`, {
 			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
 			data: {
 				acceptTerms: acceptTerms,
-				signature: signature,
-				thirdPartyTerms: thirdPartyTerms,
-				file: file
 			},
 		}).then((response) => {
 
@@ -129,6 +126,27 @@
 				alert("Erro!");
 			}
 		});
+	});
+	$("#submitSection3ThirdParty").on("click", () => {
 
+		let thirdPartyTerms = $("#third-party-terms").val();
+		let thirdPartyfile = $("#third-party-file").val();
+
+		axios.post(`/api/submitSection3ThirdParty`, {
+			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
+			data: {
+				thirdPartyTerms: thirdPartyTerms,
+				thirdPartyfile: thirdPartyfile
+			},
+		}).then((response) => {
+
+			let code = response.data["code"];
+
+			if (code == "1") {
+				window.location.replace("/dashboard");
+			} else {
+				alert("Erro!");
+			}
+		});
 	}); 
 </script>

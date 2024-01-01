@@ -98,9 +98,8 @@ def section3():
 @app.route('/section3DownloadFile')
 def section3DownloadFile():
     data = request.get_json()
-
     attestation_id = data["data"].get('attestation_id')
-
+    
     conn = mysql.connector.connect(**DATABASE_CONFIG)
     cursor = conn.cursor()
 
@@ -112,6 +111,90 @@ def section3DownloadFile():
     data = cursor.fetchone()
     file_like_data = io.BytesIO(data[0])
     return send_file(file_like_data)
+
+@app.route('/submitSection3ThidParty')
+def submitSection3ThidParty():
+    data = request.get_json()
+    user_id = data["data"].get('user_id')
+    section_id = data["data"].get('section')
+    attestation_id = data["data"].get('attestation')
+
+    acceptTerms = data["data"].get('acceptTerms')
+
+    sql = """
+    UPDATE ATTESTATION SET
+        SIGNATURE_TERMS = %s,
+    WHERE ID = %s
+    """
+    params = [
+        acceptTerms,
+    ]
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+    try:
+        cursor.execute(sql, params)
+        conn.commit()
+
+        sql = """
+        UPDATE ATTESTATION_X_FORM_SECTIONS
+        SET USER_COMPLETED = 1
+        WHERE ATTESTATION_ID_AXFS = %s
+        AND FORM_SECTION_ID_AXFS = %s
+        AND USER_ID_AXFS = %s
+        """
+        params = [attestation_id, section_id, user_id]
+        cursor.execute(sql, params)
+        conn.commit()
+
+    except mysql.connector.Error as err:
+        conn.rollback()
+        return 'ERROR'
+    return 'OK'
+
+
+@app.route('/submitSection3')
+def submitSection3():
+    data = request.get_json()
+    user_id = data["data"].get('user_id')
+    section_id = data["data"].get('section')
+    attestation_id = data["data"].get('attestation')
+
+    thirdPartyTerms = data["data"].get('thirdPartyTerms')
+    thirdPartyfile = data["data"].get('thirdPartyfile')
+
+    sql = """
+    UPDATE ATTESTATION SET
+        THRID_PARTY_TERMS = %s,
+        THRID_PARTY_FILE = %s,
+    WHERE ID = %s
+    """
+    params = [
+        thirdPartyTerms,
+        thirdPartyfile,
+    ]
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+    try:
+        cursor.execute(sql, params)
+        conn.commit()
+
+        sql = """
+        UPDATE ATTESTATION_X_FORM_SECTIONS
+        SET USER_COMPLETED = 1
+        WHERE ATTESTATION_ID_AXFS = %s
+        AND FORM_SECTION_ID_AXFS = %s
+        AND USER_ID_AXFS = %s
+        """
+        params = [attestation_id, section_id, user_id]
+        cursor.execute(sql, params)
+        conn.commit()
+
+    except mysql.connector.Error as err:
+        conn.rollback()
+        return 'ERROR'
+    return 'OK'
 
 @app.route('/submitSection2',methods=['POST'])
 def submitSection2():

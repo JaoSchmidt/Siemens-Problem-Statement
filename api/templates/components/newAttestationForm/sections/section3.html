@@ -73,15 +73,16 @@
 				writing by an appropriate agency official, has evaluated our conformance with all elements in
 				this form. The 3PAO used relevant NIST Guidance that includes all elements outlined in this
 				form as part of the assessment baseline. The assessment is attached.</label>
+			{% if terms.file %}
+			<p>Download current file</p>
+			<button id="downloadTermsFile" class="btn btn-neutral">Neutral</button>
+			Replace File:
+			<input id="third-party-file" type="file" class="file-input file-input-bordered w-full max-w-xs" />
+			{% else %}
+			<p>Artifact/Addendum Description:</p>
+			<input id="third-party-file" type="file" class="file-input file-input-bordered w-full max-w-xs" />
+			{% endif %}
 		</div>
-		{ % if terms.file != None % }
-		<p>Download current file</p>
-		<button id="downloadTermsFile" class="btn btn-neutral">Neutral</button>
-		Replace File:
-		<input id="third-party-file" type="file" class="file-input file-input-bordered w-full max-w-xs" />
-		{ % else % }
-		<input id="third-party-file" type="file" class="file-input file-input-bordered w-full max-w-xs" />
-		{ % endif % }
 	</div>
 	<button id="submitSection3" class="btn btn-primary text-white w-64 text-lg font-[700] mt-8"> Submit</button>
 

@@ -1,5 +1,6 @@
+import io
 from api import app
-from flask import render_template, send_file
+from flask import render_template, send_file, request
 import mysql.connector
 
 
@@ -34,7 +35,7 @@ def section2():
         "email":"thorn@strix.org",
         }
 
-    return render_template('/section2.html',
+    return render_template('/components/newAttestationForm/sections/section2.html',
                            form1=softwareProducerInfo,
                            form2=primaryContactInfo)
 
@@ -47,18 +48,23 @@ def section3():
         "file": None,
         }
 
-    return render_template('/section3.html', terms=terms)
+    return render_template('/components/newAttestationForm/sections/section3.html', terms=terms)
 
 @app.route('/section3DownloadFile')
 def section3DownloadFile():
-    
+    data = request.get_json()
+
+    attestation_id = data["data"].get('attestation_id')
+
     conn = mysql.connector.connect(**DATABASE_CONFIG)
     cursor = conn.cursor()
 
-    getFile = "SELECT THRID_ FROM ATTESTATION WHERE ID = %s;"
+    getFile = "SELECT THRID_PARTY_FILE FROM ATTESTATION WHERE ID = %s;"
 
-    input=['Gabriel']
+    input=[attestation_id]
     cursor.execute(getFile,input)
-    data = cursor.fetchone()
 
-    # return send_file()
+    data = cursor.fetchone()
+    file_like_data = io.BytesIO(data[0])
+    return send_file(file_like_data)
+

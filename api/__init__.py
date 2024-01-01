@@ -5,6 +5,23 @@ import random
 
 app = Flask(__name__)
 
+def row_to_dict(row, cursor_description):
+    """
+    Convert a row fetched using cursor.fetchone() to a dictionary.
+    
+    Parameters:
+    - row: A row fetched using cursor.fetchone().
+    - cursor_description: The cursor description obtained using cursor.description.
+    
+    Returns:
+    - A dictionary where keys are column names and values are corresponding row values.
+    """
+    if row is None or cursor_description is None:
+        return None
+
+    column_names = [column[0] for column in cursor_description]
+    return dict(zip(column_names, row))
+
 import api.pdf_signer
 import api.renderSections
 
@@ -23,10 +40,6 @@ DATABASE_CONFIG = {
     "password": "password",
     "database": "attestation"
 } """
-
-@app.route('/helloworld')
-def helloworld():
-    return "Hello World"
 
 @app.route('/')
 def main():
@@ -75,7 +88,6 @@ def decode( data ):
 ###### API FETCH
 @app.route('/api/checkUser', methods=['POST'])
 def checkUser():
-    
     data = request.get_json()
 
     input_username = data["data"].get('username')
@@ -89,7 +101,7 @@ def checkUser():
     cursor.execute(sql, params)
     row = cursor.fetchone()
     
-    if len(row) == 0:
+    if row is None:
         return {"code": "-1"}
     elif decode(row[2]) == input_password:
         return {"code": "1", "user": row[0]}
@@ -183,7 +195,7 @@ def checkProductsHasAttestation():
 
         res = cursor.fetchone()
         ## @return => INT || NULL, 1 ou null
-        if res[0] is not None:
+        if res is not None and res[0] is not None:
             hasAttestation.append( [splited[0],splited[1]] )
 
     if len(hasAttestation) > 0:

@@ -45,7 +45,8 @@
 			</div>
 			<div class="flex flex-row items-center">
 				<label class="w-[300px]">Email:</label>
-				<input id="email" class="input input-primary my-2 w-64" type="text" placeholder="Email" value={{form1.email}}>
+				<input id="website" class="input input-primary my-2 w-64" type="text" placeholder="Company Website"
+					value={{form1.website}}>
 			</div>
 			<div class="divider"></div>
 
@@ -86,23 +87,42 @@
 	$("#section2submit").on("click", () => {
 
 		let companyName = $("#companyName").val();
+		let address = $("#address").val();
+		let city = $("#city").val();
+		let stateProvince = $("#stateProvince").val();
+		let postalCode = $("#postalCode").val();
+		let country = $("#country").val();
+		let website = $("#website").val();
+		let name = $("#name").val();
+		let title = $("#title").val();
+		let contactAddress = $("#contactAddress").val();
+		let phoneNumber = $("#phoneNumber").val();
+		let email = $("#email").val();
 
-		axios.post(`/api/section2`, {
+		axios.post(`/api/submitSection2`, {
 			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
 			data: {
-				username: username,
-				pass: password
+				companyName: companyName,
+				address: address,
+				city: city,
+				stateProvince: stateProvince,
+				postalCode: postalCode,
+				country: country,
+				website: website,
+				name: name,
+				title: title,
+				contactAddress: contactAddress,
+				phoneNumber: phoneNumber,
+				email: email,
 			},
 		}).then((response) => {
 
 			let code = response.data["code"];
-			let user = response.data["user"];
 
-			if (code == "1") {
-				document.cookie = "user=" + user;
-				window.location.replace("/dashboard");
-			} else {
-				alert("Credenciais Incorretas ou usuário não existe!");
+			if (code == "0") {
+				alert("Success")
+			} else if (code == "-1") {
+				alert("Error");
 			}
 		});
 

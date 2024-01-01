@@ -20,7 +20,7 @@ exclude = '''
 name = "api"
 description = "Lovely"
 dependencies = [
-	"flask","pyjwt","mysql-connector-python"
+	"flask","pyjwt","mysql-connector-python","pyHanko[image-support,opentype,xmp]","pyopenssl"
 ]
 version="0.1.0"
 

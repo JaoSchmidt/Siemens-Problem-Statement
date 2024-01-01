@@ -11,7 +11,7 @@ from pyhanko.pdf_utils.font import opentype
 from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
 from pyhanko.sign.fields import SigFieldSpec, append_signature_field
 from pyhanko.sign.signers import SimpleSigner
-from api import app,row_to_dict
+from api import app
 from flask import request
 
 DATABASE_CONFIG = {
@@ -152,3 +152,19 @@ def create_keys(keyholder_name,serial_number,output_path,years_to_expire=10):
     # print("\n".join("{}:{}".format(i, j) for i, j in summary.items()))
     # print("############################################################################")
 
+def row_to_dict(row, cursor_description):
+    """
+    Convert a row fetched using cursor.fetchone() to a dictionary.
+    
+    Parameters:
+    - row: A row fetched using cursor.fetchone().
+    - cursor_description: The cursor description obtained using cursor.description.
+    
+    Returns:
+    - A dictionary where keys are column names and values are corresponding row values.
+    """
+    if row is None or cursor_description is None:
+        return None
+
+    column_names = [column[0] for column in cursor_description]
+    return dict(zip(column_names, row))

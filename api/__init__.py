@@ -68,7 +68,22 @@ def decode( data ):
     data = jwt.decode(data, app.secret_key, algorithms=['HS256'])
     return data["password"]
 
+def row_to_dict(row, cursor_description):
+    """
+    Convert a row fetched using cursor.fetchone() to a dictionary.
+    
+    Parameters:
+    - row: A row fetched using cursor.fetchone().
+    - cursor_description: The cursor description obtained using cursor.description.
+    
+    Returns:
+    - A dictionary where keys are column names and values are corresponding row values.
+    """
+    if row is None or cursor_description is None:
+        return None
 
+    column_names = [column[0] for column in cursor_description]
+    return dict(zip(column_names, row))
 
 ###### API FETCH
 @app.route('/api/checkUser', methods=['POST'])

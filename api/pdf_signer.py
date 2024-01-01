@@ -1,5 +1,7 @@
 from OpenSSL import crypto
 import os
+import sys
+import mysql.connector
 from pyhanko.sign.fields import append_signature_field
 from pyhanko.sign import signers 
 from pyhanko import stamp
@@ -9,20 +11,50 @@ from pyhanko.pdf_utils.font import opentype
 from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
 from pyhanko.sign.fields import SigFieldSpec, append_signature_field
 from pyhanko.sign.signers import SimpleSigner
-from api import app
+from api import app,row_to_dict
 from flask import request
 
+DATABASE_CONFIG = {
+    "host":"srv881.hstgr.io",
+    "user": "u138282597_jao",
+    "password": "bananasplitBA$$22",
+    "database": "u138282597_siemens"
+}
 
-# https://pyhanko.readthedocs.io/en/latest/lib-guide/signing.html#text-based-stamps
 @app.route("/signpdf")
 def signpdf():
+
+
     data = request.get_json()
-    subject_name = data["data"].get('subject_name')
-    serial_number = data["data"].get('serial_number')
-    input_path = data["data"].get('input_path')
+    attestation_id = data["data"].get('attestation_id')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    cookie_user_id = request.cookies.get('user')
+    sql ="SELECT * FROM USERS WHERE USERNAME = %s LIMIT 1;"
+    params=[cookie_user_id]
+    cursor.execute(sql,params)
+    fetch = cursor.fetchone()
+    user = row_to_dict(fetch,cursor.description)
+
+    sql = "SELECT FILENAME FROM ATTESTATION WHERE ID = %s;"
+    params=[attestation_id]
+    cursor.execute(sql, params)
+    fetch = cursor.fetchone()
+
+    att = row_to_dict(fetch,cursor.description)
+    if(att != None and user != None):
+        print(user, file=sys.stderr)
+        print(att, file=sys.stderr)
+        createSignedPdf(user.USERNAME,user.ID,att.FILENAME)
+    return {"code":"0"}
+
+# https://pyhanko.readthedocs.io/en/latest/lib-guide/signing.html#text-based-stamps
+def createSignedPdf(keyholder_name,serial_number,input_path):
 
     cs12path = "./resources/container.pfx"
-    create_keys(subject_name,serial_number,cs12path)
+    create_keys(keyholder_name,serial_number,cs12path)
 
     def sanity_check(x1, y1, w, h):
         x2 = x1 + w
@@ -52,8 +84,9 @@ def signpdf():
             with open(input_path.replace(".pdf","")+"_signed.pdf", 'wb') as outf:
                 pdf_signer.sign_pdf(w, output=outf)
             os.remove('./resources/container.pfx')
+            return { "code":"0"}
         else:
-            print("ERRO!")
+            return { "code":"1"}
 
 
 def createKeyPair(type, bits):
@@ -86,7 +119,7 @@ def create_self_signed_cert(pKey,subject_name,serial_number,years_to_expire=10):
     cert.sign(pKey, 'md5')  # or cert.sign(pKey, 'sha256')
     return cert
 
-def create_keys(subject_name,serial_number,output_path,years_to_expire=10):
+def create_keys(keyholder_name,serial_number,output_path,years_to_expire=10):
     """Generate the certificate"""
     summary = {}
     summary['OpenSSL Version'] = '23.0.1'
@@ -99,7 +132,7 @@ def create_keys(subject_name,serial_number,output_path,years_to_expire=10):
     #     summary['Private Key'] = pk_str
     # Done - Generating a private key...
     # Generating a self-signed client certification...
-    cert = create_self_signed_cert(key,subject_name,serial_number,years_to_expire)
+    cert = create_self_signed_cert(key,keyholder_name,serial_number,years_to_expire)
     # with open('./resources/certificate.cer', 'wb') as cer:
     #     cer_str = crypto.dump_certificate(
     #         crypto.FILETYPE_PEM, cert)

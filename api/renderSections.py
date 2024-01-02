@@ -1,3 +1,4 @@
+from xhtml2pdf import pisa             # import python module
 import io
 import sys
 from api import app, row_to_dict
@@ -42,16 +43,18 @@ def generateAttestationPDF():
 
     res = cursor.fetchone()
 
+    title = f"{products[0][0]}_{products[0][1]}"
     rendered_template = render_template('/engine/attestationModel.html', data=res, products=products)
-    result_file = open("./attestationsPdfs/.pdf", "w+b")
+    result_file = open(f"./resources/attestationsPdfs/{title}.pdf", "w+b")
 
     # convert HTML to PDF
     pisa_status = pisa.CreatePDF(
-            source_html,                # the HTML to convert
+            rendered_template,                # the HTML to convert
             dest=result_file)           # file handle to recieve result
 
     # close output file
-    result_file.close()     
+    result_file.close()
+    return pisa_status.err
 
 # find other example os completed databases and take a history of its columns
 def exploreOldAttestations(product_id):

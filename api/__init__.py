@@ -216,9 +216,26 @@ def assignUser():
     sql = "SELECT USERNAME FROM USERS;"
     cursor.execute(sql)
 
+
     res = cursor.fetchall()
 
-    return render_template('/components/newAttestationForm/assignUser.html', products=products, users=res)
+    ppssos = []
+    for p in products:
+        product_id = p.split("_")[0]
+        sql = """
+            SELECT U.USERNAME FROM PRODUCT_X_RESPONSIBLE_USER PXRU
+            JOIN USERS U ON U.ID = PXRU.FK_USERID_PXRU
+            WHERE PXRU.FK_PRODUCTID_PXRU = %s AND IS_PPSSO = 1
+        """
+        cursor.execute(sql,[product_id])
+        response = cursor.fetchall()
+        for r in response:
+            ppssos.append(r)
+
+
+    print(products,sys.stdout)
+
+    return render_template('/components/newAttestationForm/assignUser.html', products=products, users=res, ppssos=ppssos)
 
 
 

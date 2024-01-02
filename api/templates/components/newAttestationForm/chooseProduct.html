@@ -1,131 +1,134 @@
 <div class="flex flex-col">
 
-    <div role="tablist" class="tabs tabs-boxed">
-        <a role="tab" class="tab tab-active">Products</a>
-        <a role="tab" class="tab">Assign Users</a>
-        <a role="tab" class="tab">Confirm</a>
-    </div>
+	<div role="tablist" class="tabs tabs-boxed">
+		<a role="tab" class="tab tab-active">Products</a>
+		<a role="tab" class="tab">Assign Users</a>
+		<a role="tab" class="tab">Confirm</a>
+	</div>
 
-    <div class="overflow-x-auto mt-2 max-h-[700px]">
-        <table class="table">
-            <thead>
-                <tr>
-                <th>
-                    <label>
-                    <input id="checkAll" type="checkbox" class="checkbox" />
-                    </label>
-                </th>
-                <th>PRODUCT_ID</th>
-                <th>PRODUCT_VERSION</th>
-                <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in products %}
-                <tr>
-                <th>
-                    <label>
-                    <input pId="{{ p[0]+'_'+p[1] }}" type="checkbox" class="checkbox" />
-                    </label>
-                </th>
-                <td>{{ p[0] }}</td>
-                <td>{{ p[1] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+	<div class="overflow-x-auto mt-2 max-h-[700px]">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						<label>
+							<input id="checkAll" type="checkbox" class="checkbox" />
+						</label>
+					</th>
+					<th>PRODUCT_ID</th>
+					<th>PRODUCT_VERSION</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for p in products %}
+				<tr>
+					<th>
+						<label>
+							<input pId="{{ p[0]+'_'+p[1] }}" type="checkbox" class="checkbox" />
+						</label>
+					</th>
+					<td>{{ p[0] }}</td>
+					<td>{{ p[1] }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 
-    <button id="nextStep" class="btn btn-primary mt-4">Next</button>
+	<button id="nextStep" class="btn btn-primary mt-4">Next</button>
 
 </div>
 <script>
-    var selectedProducts = [];
+	var selectedProducts = [];
 
-    var allSelected = false;
+	var allSelected = false;
 
-    $("#checkAll").on("click", () => {
+	$("#checkAll").on("click", () => {
 
-        if ( selectedProducts.length > 0 ) {
-            selectedProducts = [];
-        }
+		if (selectedProducts.length > 0) {
+			selectedProducts = [];
+		}
 
-        $(".checkbox:not(#checkAll)").each( (i,e) => {
-            
-            if ( !allSelected ) {
-                $(e).prop('checked', true);
-                selectedProducts.push( $(e).attr('pId') );
-            } else {
-                $(e).prop('checked', false);
-                selectedProducts.pop( $(e).attr('pId') );
-            }
-        });
+		$(".checkbox:not(#checkAll)").each((i, e) => {
 
-        if ( !allSelected ) {
-            allSelected = true;
-        } else {
-            allSelected = false;
-        }
+			if (!allSelected) {
+				$(e).prop('checked', true);
+				selectedProducts.push($(e).attr('pId'));
+			} else {
+				$(e).prop('checked', false);
+				selectedProducts.pop($(e).attr('pId'));
+			}
+		});
 
-        console.log(selectedProducts)
-    });
+		if (!allSelected) {
+			allSelected = true;
+		} else {
+			allSelected = false;
+		}
 
-    $(".checkbox:not(#checkAll)").on("click", (e) => {
+		console.log(selectedProducts)
+	});
 
-        let pId = $(e.currentTarget).attr('pId');
+	$(".checkbox:not(#checkAll)").on("click", (e) => {
 
-        if ( selectedProducts.includes( pId ) ) {
-            selectedProducts.pop( pId );
-        } else {
-            selectedProducts.push( pId );
-        }
-        console.log(selectedProducts);
-    });
+		let pId = $(e.currentTarget).attr('pId');
 
-    $("#nextStep").on("click", () => {
+		if (selectedProducts.includes(pId)) {
+			let index = selectedProducts.indexOf(pId);
+			if (index !== -1) {
+				selectedProducts.splice(index, 1);
+			}
+		} else {
+			selectedProducts.push(pId);
+		}
+		console.log(selectedProducts);
+	});
 
-        $("#modalBoxLoader").css("display", "flex");
-        
-        axios.post(`/api/checkProductsHasAttestation`, {
-        headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
-        data: {
-            products: selectedProducts
-        },
-        }).then( (response) => {
-            
-            $("#modalBoxLoader").css("display", "none");
+	$("#nextStep").on("click", () => {
 
-            if ( response.data["code"] == "1" ) {
+		$("#modalBoxLoader").css("display", "flex");
 
-                $("#modalBoxLoader").css("display", "flex");
+		axios.post(`/api/checkProductsHasAttestation`, {
+			headers: {'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
+			data: {
+				products: selectedProducts
+			},
+		}).then((response) => {
 
-                axios.post(`/api/assignUser`, {
-                headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
-                data: {
-                    products: selectedProducts
-                },
-                }).then( (response) => {
+			$("#modalBoxLoader").css("display", "none");
 
-                    $("#menuModalContent").html('');
+			if (response.data["code"] == "1") {
 
-                    jQuery(response.data).appendTo( $("#menuModalContent") );
-                    
-                    $("#modalBoxLoader").css("display", "none");
+				$("#modalBoxLoader").css("display", "flex");
 
-                });
+				axios.post(`/api/assignUser`, {
+					headers: {'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
+					data: {
+						products: selectedProducts
+					},
+				}).then((response) => {
 
-            } else {
+					$("#menuModalContent").html('');
 
-                var productsHTML = '';
+					jQuery(response.data).appendTo($("#menuModalContent"));
 
-                response.data["array"].forEach(e => {
-                    
-                    productsHTML += '<span>'+'Product: '+e[0]+' '+'Version: '+e[1]+'</span>'
-                   
-                });
+					$("#modalBoxLoader").css("display", "none");
+
+				});
+
+			} else {
+
+				var productsHTML = '';
+
+				response.data["array"].forEach(e => {
+
+					productsHTML += '<span>' + 'Product: ' + e[0] + ' ' + 'Version: ' + e[1] + '</span>'
+
+				});
 
 
-                jQuery(`
+				jQuery(`
                     <div role="alert" class="alert alert-warning max-w-[500px] z-[99999999] mt-4 flex flex-col">
                         <div class='flex flex-row'>
                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -133,15 +136,15 @@
                         </div>
                         <span id='listErrors' class='flex flex-col'></span>
                     </div>
-                `).appendTo( $("#menuModalContent") );
+                `).appendTo($("#menuModalContent"));
 
-                jQuery(productsHTML).appendTo( $("#listErrors") );
+				jQuery(productsHTML).appendTo($("#listErrors"));
 
-                alert('Selected Products Already have Attestation!');
-            }
+				alert('Selected Products Already have Attestation!');
+			}
 
-        });
+		});
 
-    });
+	});
 
 </script>

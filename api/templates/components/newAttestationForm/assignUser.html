@@ -118,10 +118,13 @@
 		$("#userList").attr("s", section_target);
 
 		//userList.showModal();
-		if (section_target == "3")
+		if (section_target == "s3") {
 			$("#ppssoList").css("display", "flex");
-		else
+      $("#userList").css("display", "none");
+    } else {
 			$("#userList").css("display", "flex");
+      $("#ppssoList").css("display", "none");
+    }
 
 	}
 	function assignUserHandler(e) {

@@ -173,7 +173,7 @@ def submitSection3ThidParty():
 
     except mysql.connector.Error as err:
         conn.rollback()
-        return 'ERROR'
+        return err.msg
     return 'OK'
 
 
@@ -181,8 +181,8 @@ def submitSection3ThidParty():
 def submitSection3():
     data = request.get_json()
     user_id = request.cookies.get('user')
-    section_id = data["data"].get('section')
-    attestation_id = data["data"].get('attestation')
+    section_id = data["data"].get('section_id')
+    attestation_id = data["data"].get('attestation_id')
 
     thirdPartyTerms = data["data"].get('thirdPartyTerms')
     thirdPartyfile = data["data"].get('thirdPartyfile')
@@ -196,6 +196,7 @@ def submitSection3():
     params = [
         thirdPartyTerms,
         thirdPartyfile,
+        attestation_id
     ]
 
     conn = mysql.connector.connect(**DATABASE_CONFIG)
@@ -217,7 +218,7 @@ def submitSection3():
 
     except mysql.connector.Error as err:
         conn.rollback()
-        return 'ERROR'
+        return err.msg
     return 'OK'
 
 @app.route('/api/submitSection2',methods=['POST'])

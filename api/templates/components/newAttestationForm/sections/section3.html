@@ -1,4 +1,4 @@
-<div class="flex flex-col">
+<div class="flex flex-col" id="attestation" a="{{ attestation_id }}">
 	<p class="text-lg font-[800] text-white w-2/3 text-justify my-4">How would you like to sign section 3?</p>
 	<div class="collapse bg-base-200">
 		<input type="radio" name="my-accordion-1" checked="checked" />
@@ -115,7 +115,7 @@
 
 	$("#downloadTermsFile").on("click", () => {
 		axios.get(`/api/downloadTermsFile`, {
-			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*'},
+		headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*'},
 		}).then((response) => {
 
 			let code = response.data["code"];
@@ -132,6 +132,8 @@
 		axios.post(`/api/submitSection3`, {
 			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
 			data: {
+				section_id: 3,
+				attestation_id: $("#attestation").attr("a"),
 				acceptTerms: acceptTerms,
 			},
 		}).then((response) => {
@@ -153,8 +155,8 @@
 		axios.post(`/api/submitSection3ThirdParty`, {
 			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
 			data: {
-				section_id: section_id,
-				attestation_id: attestation_id,
+				section_id: 3,
+				attestation_id: $("#attestation").attr("a"),
 				thirdPartyTerms: thirdPartyTerms,
 				thirdPartyfile: thirdPartyfile
 			},

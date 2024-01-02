@@ -1,97 +1,106 @@
 <div class="flex flex-col">
 
-  <div role="tablist" class="tabs tabs-boxed">
-    <a role="tab" class="tab">Products</a>
-    <a role="tab" class="tab tab-active">Assign Users</a>
-    <a role="tab" class="tab">Confirm</a>
-  </div>
+	<div role="tablist" class="tabs tabs-boxed">
+		<a role="tab" class="tab">Products</a>
+		<a role="tab" class="tab tab-active">Assign Users</a>
+		<a role="tab" class="tab">Confirm</a>
+	</div>
 
-  <div class="flex flex-col my-4 text-white">
-    <span>Selected Products:</span>
-    {% for p in products %}
-    <span class="pv">{{ p }}</span>
-    {% endfor %}
-  </div>
+	<div class="flex flex-col my-4 text-white">
+		<span>Selected Products:</span>
+		{% for p in products %}
+		<span class="pv">{{ p }}</span>
+		{% endfor %}
+	</div>
 
-  <button class="btn btn-primary btn-md my-4" onclick="confirmUserAssignHandler()">Confirm selection</button>
+	<button class="btn btn-primary btn-md my-4" onclick="confirmUserAssignHandler()">Confirm selection</button>
 
-    <div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1">
-        <input type="radio" name="my-accordion-2" />  
-        <div class="collapse-title text-xl font-medium">
-          Section I
-        </div>
-        <div class="collapse-content"> 
-            
-            <div class="overflow-x-auto">
+	<div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1">
+		<input type="radio" name="my-accordion-2" />
+		<div class="collapse-title text-xl font-medium">
+			Section I
+		</div>
+		<div class="collapse-content">
 
-                <button class="btn btn-success btn-sm" s="s1" onclick="userListHandler(this)">Add User</button>
+			<div class="overflow-x-auto">
 
-                <table class="table">
-                  <tbody id="s1">
-                  </tbody>
-                </table>
+				<button class="btn btn-success btn-sm" s="s1" onclick="userListHandler(this)">Add User</button>
 
-            </div>
+				<table class="table">
+					<tbody id="s1">
+					</tbody>
+				</table>
 
-        </div>
-    </div>
+			</div>
 
-    
-    <div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1"> 
-        <input type="radio" name="my-accordion-2" /> 
-        <div class="collapse-title text-xl font-medium">
-          Section II
-        </div>
-        <div class="collapse-content">
-          
-          <div class="overflow-x-auto">
-
-            <button class="btn btn-success btn-sm" s="s2" onclick="userListHandler(this)">Add User</button>
-
-            <table class="table">
-              <tbody id="s2">
-              </tbody>
-            </table>
-
-          </div>
-
-        </div>
-    </div>
-
-    
-    <div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1">
-        <input type="radio" name="my-accordion-2" /> 
-        <div class="collapse-title text-xl font-medium">
-          Section III
-        </div>
-        <div class="collapse-content"> 
-          
-          <div class="overflow-x-auto">
-
-            <button class="btn btn-success btn-sm" s="s3" onclick="userListHandler(this)">Add User</button>
-
-            <table class="table">
-              <tbody id="s3">
-              </tbody>
-            </table>
-
-          </div>
-
-        </div>
-    </div>
+		</div>
+	</div>
 
 
-    <table class="table table-pin-rows hidden my-4" id="userList">
-        <tbody>
-        {% for u in users %}
-        <tr>
-            <td>{{ u[0] }}</td>
-            <td><button class="btn btn-success" u="{{ u[0] }}" onclick="assignUserHandler(this)">Assign</button></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
- 
+	<div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1">
+		<input type="radio" name="my-accordion-2" />
+		<div class="collapse-title text-xl font-medium">
+			Section II
+		</div>
+		<div class="collapse-content">
+
+			<div class="overflow-x-auto">
+
+				<button class="btn btn-success btn-sm" s="s2" onclick="userListHandler(this)">Add User</button>
+
+				<table class="table">
+					<tbody id="s2">
+					</tbody>
+				</table>
+
+			</div>
+
+		</div>
+	</div>
+
+
+	<div tabindex="0" class="collapse collapse-arrow bg-base-200 my-1">
+		<input type="radio" name="my-accordion-2" />
+		<div class="collapse-title text-xl font-medium">
+			Section III
+		</div>
+		<div class="collapse-content">
+
+			<div class="overflow-x-auto">
+
+				<button class="btn btn-success btn-sm" s="s3" onclick="userListHandler(this)">Add User</button>
+
+				<table class="table">
+					<tbody id="s3">
+					</tbody>
+				</table>
+
+			</div>
+
+		</div>
+	</div>
+
+
+	<table class="table table-pin-rows hidden my-4" id="userList">
+		<tbody>
+			{% for u in users %}
+			<tr>
+				<td>{{ u[0] }}</td>
+				<td><button class="btn btn-success" u="{{ u[0] }}" onclick="assignUserHandler(this)">Assign</button></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<table class="table table-pin-rows hidden my-4" id="ppssoList">
+		<tbody>
+			{% for u in ppssos %}
+			<tr>
+				<td>{{ u[0] }}</td>
+				<td><button class="btn btn-success" u="{{ u[0] }}" onclick="assignUserHandler(this)">Assign</button></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 
 </div>
 
@@ -100,83 +109,84 @@
 
 <script>
 
-  var addedUsers = {}
+	var addedUsers = {}
 
-  function userListHandler(e) {
+	function userListHandler(e) {
 
-    let section_target = $(e).attr("s");
+		let section_target = $(e).attr("s");
 
-    $("#userList").attr("s", section_target);
+		$("#userList").attr("s", section_target);
 
-    //userList.showModal();
-    $("#userList").css("display", "flex");
+		//userList.showModal();
+		if (section_target == "3")
+			$("#ppssoList").css("display", "flex");
+		else
+			$("#userList").css("display", "flex");
 
-  }
+	}
+	function assignUserHandler(e) {
 
-  
-  function assignUserHandler(e) {
+		let section_target = $("#userList").attr("s");
+		let username = $(e).attr("u");
 
-    let section_target = $("#userList").attr("s");
-    let username = $(e).attr("u");
+		$("#userList").css("display", "none");
 
-    $("#userList").css("display", "none");
+		if (!Array.isArray(addedUsers[section_target])) {
+			addedUsers[section_target] = [username];
+		} else {
 
-    if ( !Array.isArray( addedUsers[section_target] ) ) {
-      addedUsers[section_target] = [username];
-    } else {
+			if (!addedUsers[section_target].includes(username)) {
+				addedUsers[section_target].push(username);
+			} else {
+				alert('User already added to Section!'); return;
+			}
 
-      if ( !addedUsers[section_target].includes(username) ) {
-        addedUsers[section_target].push( username );
-      } else {
-        alert('User already added to Section!');return;
-      }
+		}
 
-    }
-    
 
-    jQuery(`
+		jQuery(`
     <tr>
     <td>${username}<button class="btn btn-error btn-xs ml-2" u="${username}" s="${section_target}"
     onclick="$(this).parent().parent().remove();addedUsers['${section_target}'].pop('${username}');">Remove</button></td>
     </tr>
-    `).appendTo( $(`#${section_target}`) );
+    `).appendTo($(`#${section_target}`));
 
 
-    //addedUsers[$(e.currentTarget).attr('s')].remove( $(e.currentTarget).attr('u') );
+		//addedUsers[$(e.currentTarget).attr('s')].remove( $(e.currentTarget).attr('u') );
 
-    
 
-  }
 
-  /*
-  JSON Body
-  {
-    users: addedUsers,
-    products: 
-  }
+	}
 
-  */
+	/*
+	JSON Body
+	{
+		users: addedUsers,
+		products: 
+	}
 
-  function confirmUserAssignHandler() {
+	*/
 
-    var products_arr = [];
-    $(".pv").each( (i,e) => {
-      products_arr.push( $(e).text() );
-    });
+	function confirmUserAssignHandler() {
 
-    console.log(addedUsers);
+		var products_arr = [];
+		$(".pv").each((i, e) => {
+			products_arr.push($(e).text());
+		});
 
-    axios.post(`/api/createAttestation`, {
-    headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
-    data: {
-      users: addedUsers,
-      products: products_arr
-    },
-    }).then( (response) => {
-      console.log(response);
-    });
+		console.log(addedUsers);
 
-  }  
+		axios.post(`/api/createAttestation`, {
+			headers: {'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
+			data: {
+				users: addedUsers,
+				products: products_arr
+			},
+		}).then((response) => {
+			console.log(response);
+		});
+
+	}
 
 
 </script>

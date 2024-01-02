@@ -1,0 +1,59 @@
+<div class="flex flex-col items-center" id="sectionForm" s="{{ section }}" a="{{ attestation }}">
+
+    <span class="underline">Section I</span>
+
+    <div class="flex flex-row mt-6 font-[700]">
+        <input type="checkbox" class="checkbox typeChk mr-1" value="New Attestation"/>New Attestation
+        <input type="checkbox" class="checkbox typeChk ml-4 mr-1" value="Attestation Following Extension or Waiver"/>Attestation Following Extension or Waiver
+        <input type="checkbox" class="checkbox typeChk ml-4 mr-1" value="Revised Attestation"/>Revised Attestation
+    </div>
+    
+    <div class="flex flex-row flex-wrap mt-8">
+        <span class="font-[800]">Type of Attestation:</span>
+        <input type="checkbox" class="checkbox AttestationtypeChk ml-3 mr-1" value="Company-wide"/>Company-wide
+        <input type="checkbox" class="checkbox AttestationtypeChk ml-4 mr-1" value="Individual Product"/>Individual Product
+        <input type="checkbox" class="checkbox AttestationtypeChk ml-4 mr-1" value="Multiple Products or Specific Product Version(s)"/>Multiple Products or Specific Product Version(s) (please provide complete list)
+    </div>
+
+    <p class="mt-6 text-xs font-[300] w-2/3 text-justify">If this attestation is for an individual product, multiple products, or product line, provide the
+        software name, version number, and release/publish date to which this attestation applies.
+        Additional pages can be attached to this attestation if more lines are needed: </p>
+
+    <div class="overflow-x-auto mt-6">
+        <table class="table bg-[rgba(0,0,0,0.12)]">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Product(s) Name</th>
+                <th>Version Number (if applicable)</th>
+                <th>Release/Publish Date (if applicable)</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr class="product" pId="{{ p[0]+'_'+p[1] }}" val="">
+                    <th></th>
+                    <td>{{ p[0] }}</td>
+                    <td>{{ p[1] }}</td>
+                    {% if p[2] == 'None' %}
+                    <td>{{ p[2] }}</td>
+                    {% else %}
+                    <td><input type="text" value="" oninput="$(this).parent().parent().val($(this).val())" class="input input-bordered input-sm rounded-none input-primary p-1" placeholder="YYYY-MM-DD"></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p class="mt-6 text-xs font-[300] w-2/3 text-justify">For the above specified software, this form does not cover any components of that software that
+        fall into the following categories:
+        1. Software developed by Federal agencies;
+        2. Open source software that is freely and directly obtained directly by a Federal agency; or
+        3. Software that is freely obtained and publicly available.
+        Note: In signing this attestation, software producers are attesting to adhering to the secure
+        software development practices outlined in Section III. </p>
+
+    <button onclick="formSubmitHandler()" class="btn btn-primary mt-8 w-36 text-white">Send Section</button>
+
+</div>

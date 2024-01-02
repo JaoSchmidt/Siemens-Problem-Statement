@@ -14,7 +14,7 @@
   <header class="h-[80px] w-full flex flex-row items-center justify-center">
     <button id="generateAttestationHandler" class="btn btn-primary mx-4 text-white"> Generate New Attestation </button>
     <button id="getProductsHandler" class="btn btn-primary mx-4 text-white"> Products </button>
-    <button class="btn btn-primary mx-4 text-white"> Attestations </button>
+    <button id="getAttestationsHandler" class="btn btn-primary mx-4 text-white"> Attestations </button>
   </header>
 
   <main class="flex flex-row">
@@ -79,6 +79,27 @@
     $("#modalBoxLoader").css("display", "flex");
 
     axios.get(`/api/components/showProducts`, {
+    headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*' },
+    }).then( (response) => {
+
+      $("#menuModalContent").html('');
+
+      $("#modalBoxLoader").css("display", "none");
+
+      jQuery(response.data).appendTo( $("#menuModalContent") );
+      
+      menuModal.showModal()
+
+    });
+
+  });
+  
+
+  $("#getAttestationsHandler").on("click", () => {
+
+    $("#modalBoxLoader").css("display", "flex");
+
+    axios.get(`/api/getAttestations`, {
     headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*' },
     }).then( (response) => {
 

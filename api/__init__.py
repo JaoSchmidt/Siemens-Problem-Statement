@@ -430,6 +430,75 @@ def formSubmit():
     return 'OK'
 
 
+@app.route('/api/getAttestations', methods=['GET'])
+def getAttestations():
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    attestations = []
+
+    sql = """
+    SELECT ID FROM ATTESTATION 
+    """
+    cursor.execute(sql)
+
+    res = cursor.fetchall()
+
+    for a in res:
+
+        sql = """
+        SELECT * FROM ATTESTATION_X_FORM_SECTIONS
+        WHERE ATTESTATION_ID_AXFS = %s
+        """
+        params = [a[0]]
+        cursor.execute(sql, params)
+        hasAnySection = cursor.fetchall()
+        if len(hasAnySection) == 0:
+            noSectionsAssigned = True
+        else:
+            noSectionsAssigned = False
+
+        sql = """
+        SELECT PRODUCT_ID, VERSION_ID, ATTESTATION_ID_AXFS,FORM_SECTION_ID_AXFS FROM ATTESTATION_X_FORM_SECTIONS AXFS
+        JOIN PRODUCT_VERSION PV ON PV.FK_ATTESTATION_ID_PV = AXFS.ATTESTATION_ID_AXFS
+        WHERE ATTESTATION_ID_AXFS = %s
+        AND USER_COMPLETED = 0
+        """
+        params = [a[0]]
+        cursor.execute(sql, params)
+
+        count = cursor.fetchall()
+        if len(count) > 0 and not noSectionsAssigned:
+            attestations.append( [a[0], 'incomplete'] )
+        elif not noSectionsAssigned:
+            attestations.append( [a[0], 'complete'] )
+
+    return render_template('/components/getAttestations.html', attestations=attestations)
+
+    
+@app.route('/api/generateAttestationPDF', methods=['POST'])
+def generateAttestationPDF():
+
+    data = request.get_json()
+    attestation_id = data["data"].get('attestation')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    sql = """
+    SELECT * FROM ATTESTATION A
+    JOIN PRODUCT_VERSION PV ON PV.FK_ATTESTATION_ID_PV = A.ID
+    WHERE ID = %s
+    """
+    params = [attestation_id]
+    cursor.execute(sql, params)
+
+    res = cursor.fetchone()
+
+    return render_template('/engine/attestationModel', data=res)
+
+
 """ @app.route('/submit_form', methods=['POST'])
 def submit_form():
     try:

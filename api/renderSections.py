@@ -136,8 +136,8 @@ def section3DownloadFile():
     file_like_data = io.BytesIO(data[0])
     return send_file(file_like_data)
 
-@app.route('/api/submitSection3ThidParty')
-def submitSection3ThidParty():
+@app.route('/api/submitSection3', methods=['POST'])
+def submitSection3():
     data = request.get_json()
     user_id = request.cookies.get('user')
     section_id = data["data"].get('section_id')
@@ -147,11 +147,12 @@ def submitSection3ThidParty():
 
     sql = """
     UPDATE ATTESTATION SET
-        SIGNATURE_TERMS = %s,
+        SIGNATURE_TERMS = %s
     WHERE ID = %s
     """
     params = [
         acceptTerms,
+        attestation_id
     ]
 
     conn = mysql.connector.connect(**DATABASE_CONFIG)
@@ -173,12 +174,12 @@ def submitSection3ThidParty():
 
     except mysql.connector.Error as err:
         conn.rollback()
-        return err.msg
+        return str(err.msg)
     return 'OK'
 
 
-@app.route('/api/submitSection3', methods=['POST'])
-def submitSection3():
+@app.route('/api/submitSection3ThirdParty')
+def submitSection3ThirdParty():
     data = request.get_json()
     user_id = request.cookies.get('user')
     section_id = data["data"].get('section_id')
@@ -218,7 +219,7 @@ def submitSection3():
 
     except mysql.connector.Error as err:
         conn.rollback()
-        return err.msg
+        return str(err.msg)
     return 'OK'
 
 @app.route('/api/submitSection2',methods=['POST'])

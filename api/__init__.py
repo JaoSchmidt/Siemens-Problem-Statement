@@ -524,7 +524,7 @@ def generateAttestationPDF():
 
     res = cursor.fetchone()
 
-    return render_template('/engine/attestationModel', data=res, products=products)
+    return render_template('/engine/attestationModel.html', data=res, products=products)
 
 
 """ @app.route('/submit_form', methods=['POST'])

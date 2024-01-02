@@ -177,7 +177,7 @@ def submitSection3ThidParty():
     return 'OK'
 
 
-@app.route('/api/submitSection3')
+@app.route('/api/submitSection3', methods=['POST'])
 def submitSection3():
     data = request.get_json()
     user_id = request.cookies.get('user')

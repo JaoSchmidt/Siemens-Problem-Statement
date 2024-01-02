@@ -504,16 +504,27 @@ def generateAttestationPDF():
     cursor = conn.cursor()
 
     sql = """
+    SELECT PRODUCT_ID, VERSION_ID, RELEASE_PUBLISH_DATE
+    FROM PRODUCT_VERSION
+    WHERE FK_ATTESTATION_ID_PV = %s
+    """
+    params = [attestation_id]
+    cursor.execute(sql, params)
+
+    products = cursor.fetchall()
+
+    sql = """
     SELECT * FROM ATTESTATION A
     JOIN PRODUCT_VERSION PV ON PV.FK_ATTESTATION_ID_PV = A.ID
     WHERE ID = %s
+    LIMIT 1
     """
     params = [attestation_id]
     cursor.execute(sql, params)
 
     res = cursor.fetchone()
 
-    return render_template('/engine/attestationModel', data=res)
+    return render_template('/engine/attestationModel', data=res, products=products)
 
 
 """ @app.route('/submit_form', methods=['POST'])

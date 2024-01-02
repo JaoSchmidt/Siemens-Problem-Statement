@@ -100,6 +100,25 @@ def section3(section_id, attestation_id):
                            attestation_id=attestation_id
                            )
 
+# @app.route('/api/htmlToPdf')
+# def htmlToPdf():
+
+#     data = request.get_json()
+#     output_filename = data["data"].get('output_filename')
+#     # open output file for writing (truncated binary)
+#     result_file = open(output_filename, "w+b")
+
+#     # convert HTML to PDF
+#     pisa_status = pisa.CreatePDF(
+#             source_html,                # the HTML to convert
+#             dest=result_file)           # file handle to recieve result
+
+#     # close output file
+#     result_file.close()                 # close output file
+
+#     # return False on success and True on errors
+#     return pisa_status.err
+
 @app.route('/api/section3DownloadFile')
 def section3DownloadFile():
     data = request.get_json()
@@ -274,8 +293,8 @@ def submitSection2():
         AND USER_ID_AXFS = %s
         """
         params = [attestation_id, section_id, user_id]
-        # cursor.execute(sql, params)
-        # conn.commit()
+        cursor.execute(sql, params)
+        conn.commit()
 
     except mysql.connector.Error as err:
         conn.rollback()

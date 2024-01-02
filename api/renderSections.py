@@ -12,6 +12,47 @@ DATABASE_CONFIG = {
     "database": "u138282597_siemens"
 }
 
+@app.route('/api/generateAttestationPDF', methods=['POST'])
+def generateAttestationPDF():
+
+    data = request.get_json()
+    attestation_id = data["data"].get('attestation')
+
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
+    cursor = conn.cursor()
+
+    sql = """
+    SELECT PRODUCT_ID, VERSION_ID, RELEASE_PUBLISH_DATE
+    FROM PRODUCT_VERSION
+    WHERE FK_ATTESTATION_ID_PV = %s
+    """
+    params = [attestation_id]
+    cursor.execute(sql, params)
+
+    products = cursor.fetchall()
+
+    sql = """
+    SELECT * FROM ATTESTATION A
+    JOIN PRODUCT_VERSION PV ON PV.FK_ATTESTATION_ID_PV = A.ID
+    WHERE ID = %s
+    LIMIT 1
+    """
+    params = [attestation_id]
+    cursor.execute(sql, params)
+
+    res = cursor.fetchone()
+
+    rendered_template = render_template('/engine/attestationModel.html', data=res, products=products)
+    result_file = open("./attestationsPdfs/.pdf", "w+b")
+
+    # convert HTML to PDF
+    pisa_status = pisa.CreatePDF(
+            source_html,                # the HTML to convert
+            dest=result_file)           # file handle to recieve result
+
+    # close output file
+    result_file.close()     
+
 # find other example os completed databases and take a history of its columns
 def exploreOldAttestations(product_id):
     

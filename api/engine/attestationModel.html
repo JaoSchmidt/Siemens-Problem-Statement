@@ -3,16 +3,16 @@
     <span class="underline">Section I</span>
 
     <div class="flex flex-row mt-6 font-[700]">
-        <input type="checkbox" class="checkbox typeChk mr-1" value="New Attestation"/>New Attestation
-        <input type="checkbox" class="checkbox typeChk ml-4 mr-1" value="Attestation Following Extension or Waiver"/>Attestation Following Extension or Waiver
-        <input type="checkbox" class="checkbox typeChk ml-4 mr-1" value="Revised Attestation"/>Revised Attestation
+        <input type="checkbox" {{ 'checked' if data[20] == 'New Attestation' }} class="checkbox typeChk mr-1" value="New Attestation"/>New Attestation
+        <input type="checkbox" {{ 'checked' if data[20] == 'Attestation Following Extension or Waiver' }} class="checkbox typeChk ml-4 mr-1" value="Attestation Following Extension or Waiver"/>Attestation Following Extension or Waiver
+        <input type="checkbox" {{ 'checked' if data[20] == 'Revised Attestation' }} class="checkbox typeChk ml-4 mr-1" value="Revised Attestation"/>Revised Attestation
     </div>
     
     <div class="flex flex-row flex-wrap mt-8">
         <span class="font-[800]">Type of Attestation:</span>
-        <input type="checkbox" class="checkbox AttestationtypeChk ml-3 mr-1" value="Company-wide"/>Company-wide
-        <input type="checkbox" class="checkbox AttestationtypeChk ml-4 mr-1" value="Individual Product"/>Individual Product
-        <input type="checkbox" class="checkbox AttestationtypeChk ml-4 mr-1" value="Multiple Products or Specific Product Version(s)"/>Multiple Products or Specific Product Version(s) (please provide complete list)
+        <input type="checkbox" {{ 'checked' if data[21] == 'Company-wide' }} class="checkbox AttestationtypeChk ml-3 mr-1" value="Company-wide"/>Company-wide
+        <input type="checkbox" {{ 'checked' if data[21] == 'Individual Product' }} class="checkbox AttestationtypeChk ml-4 mr-1" value="Individual Product"/>Individual Product
+        <input type="checkbox" {{ 'checked' if data[21] == 'Multiple Products or Specific Product Version(s)' }} class="checkbox AttestationtypeChk ml-4 mr-1" value="Multiple Products or Specific Product Version(s)"/>Multiple Products or Specific Product Version(s) (please provide complete list)
     </div>
 
     <p class="mt-6 text-xs font-[300] w-2/3 text-justify">If this attestation is for an individual product, multiple products, or product line, provide the
@@ -54,6 +54,166 @@
         Note: In signing this attestation, software producers are attesting to adhering to the secure
         software development practices outlined in Section III. </p>
 
-    <button onclick="formSubmitHandler()" class="btn btn-primary mt-8 w-36 text-white">Send Section</button>
+    <div class="flex flex-col w-full items-center" id="sectionForm" s="{{ section_id }}" a="{{ attestation_id }}">
+        <div class="grid h-auto card w-fit p-8 bg-base-300 rounded-box place-items-center">
+            <h3>1. Software Producer Information</h3>
+            <div class="flex flex-row items-center">
+                <label class="w-[300px]">Company Name:</label>
+                <p>{{ data[1] }}</p>
+            </div>
+            <div class="flex flex-row items-center">
+                <label class="w-[300px]">Address:</label>
+                <p>{{ data[2] }}</p>
+            </div>
+            <div class="flex flex-row items-center">
+                <label class="w-[300px]">City:</label>
+                <p>{{ data[3] }}</p>
+            </div>
+            <div class="flex flex-row items-center">
+                <label class="w-[300px]">State or Province:</label>
+                <p>{{ data[4] }}</p>
+            </div>
+            <div class="flex flex-row items-center">
+                <label class="w-[300px]">Postal Code:</label>
+                <p>{{ data[5] }}</p>
+            </div>
+            <div class="flex flex-row items-center">
+                <label class="w-[300px]">Country:</label>
+                <p>{{ data[6] }}</p>
+            </div>
+            <div class="flex flex-row items-center">
+                <label class="w-[300px]">Email:</label>
+                <p>{{ data[7] }}</p>
+            </div>
+            <div class="divider"></div>
+    
+            <div class="grid h-auto card w-fit p-8 bg-base-300 rounded-box place-items-center">
+                <h3>2. Primary Contact for this Document and Related</h3>
+                <h3>Information (may be an individual,role, or group):</h3>
+                <div class="flex flex-row items-center">
+                    <label class="w-[300px]">Name:</label>
+                    <p>{{ data[8] }}</p>
+                </div>
+                <div class="flex flex-row items-center">
+                    <label class="w-[300px]">Title:</label>
+                    <p>{{ data[9] }}</p>
+                </div>
+                <div class="flex flex-row items-center">
+                    <label class="w-[300px]">Contact Address:</label>
+                    <p>{{ data[10] }}</p>
+                </div>
+                <div class="flex flex-row items-center">
+                    <label class="w-[300px]">Phone Number:</label>
+                    <p>{{ data[11] }}</p>
+                </div>
+                <div class="flex flex-row items-center">
+                    <label class="w-[300px]">Email:</label>
+                    <p>{{ data[12] }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex flex-col">
+        <p class="text-lg font-[800] text-white w-2/3 text-justify my-4">How would you like to sign section 3?</p>
+        {% if data[15] == 1 %}
+        <div class="collapse bg-base-200">
+            <input type="radio" name="my-accordion-1" checked="checked" />
+            <div class="collapse-title text-xl font-medium">
+                Attestation and Signature
+            </div>
+            <div class="collapse-content flex flex-col">
+                <p class="font-[300] text-md">
+                    On behalf of the above-specified company, I attest that [software producer] presently makes
+                    consistent use of the following practices, derived from the secure software development
+                    framework (SSDF),4 in developing the software identified in Section I:
+                </p>
+                <p class="font-[600] text-md">
+                    1) The software is developed and built in secure environments. Those environments are secured
+                    by the following actions, at a minimum:	
+                </p>
+                <p class="font-[300] text-md">
+                    a) Separating and protecting each environment involved in developing and building
+                    software;
+                </p>
+                <p class="font-[300] text-md">
+                    b) Regularly logging, monitoring, and auditing trust relationships used for authorization and
+                    access:
+                </p>
+                <p class="font-[300] text-md">
+                    i) to any software development and build environments; and
+                </p>
+                <p class="font-[300] text-md">
+                    ii) among components within each environment;
+                </p>
+                <p class="font-[300] text-md">
+                    c) Enforcing multi-factor authentication and conditional access across the environments
+                    relevant to developing and building software in a manner that minimizes security risk;
+                </p>
+                <p class="font-[300] text-md">
+                    d) Taking consistent and reasonable steps to document, as well as minimize use or inclusion	
+                    of software products that create undue risk within the environments used to develop and
+                    build software;
+                </p>
+                <p class="font-[300] text-md">
+                    e) Encrypting sensitive data, such as credentials, to the extent practicable and based on risk;
+                </p>
+                <p class="font-[300] text-md">
+                    f) Implementing defensive cybersecurity practices, including continuous monitoring of
+                    operations and alerts and, as necessary, responding to suspected and confirmed cyber
+                    incidents;
+                </p>
+                <p class="font-[600] text-md">
+                    2) The software producer has made a good-faith effort to maintain trusted source code supply
+                    chains by employing automated tools or comparable processes to address the security of
+                    internal code and third-party components and manage related vulnerabilities;
+                </p>
+                <p class="font-[600] text-md">
+                    3) The software producer maintains provenance for internal code and third-party components
+                    incorporated into the software;
+                </p>
+                <p class="font-[600] text-md">
+                    4) The software producer employs automated tools or comparable processes that check for
+                    security vulnerabilities. In addition:
+                </p>
+                <p class="font-[300] text-md">
+                    a) The software producer operates these processes on an ongoing basis and, at a minimum,
+                    prior to product, version, or update releases;
+                </p>
+                <p class="font-[300] text-md">
+                    b) The software producer has a policy or process to address discovered security
+                    vulnerabilities prior to product release; and
+                </p>
+                <p class="font-[300] text-md">
+                    c) The software producer operates a vulnerability disclosure program and accepts, reviews,
+                    and addresses disclosed software vulnerabilities in a timely fashion and according to any
+                    timelines specified in the vulnerability disclosure program or applicable policies.
+                </p>
+                <div class="flex flex-row my-4">
+                    <input class="checkbox mr-2" type="checkbox" id="accept-terms" name="accept-terms" value={{terms.acceptTerms}}>
+                    <label for="accept-terms">To the best of my knowledge, I attest that all requirements outlined above are consistently
+                        maintained and satisfied. I further attest the company will notify all impacted agencies if
+                        conformance to any element of this attestation is no longer valid.</label>
+                </div>
+            </div>
+        </div>
+        {% elif data[14] == 1 %}
+        <div class="collapse bg-base-200">
+            <input type="radio" name="my-accordion-1" />
+            <div class="collapse-title text-xl font-medium">
+                Attestation by Third Party
+            </div>
+            <div class="collapse-content">
+                <input class="checkbox mr-2" type="checkbox" id="third-party-terms" name="accept-terms" value={{terms.thirdPartyTerms}}>
+                <label for="third-party-terms">A Third Party Assessor Organization (3PAO), either FedRAMP-certified or approved in
+                    writing by an appropriate agency official, has evaluated our conformance with all elements in
+                    this form. The 3PAO used relevant NIST Guidance that includes all elements outlined in this
+                    form as part of the assessment baseline. The assessment is attached.
+                </label>
+                <a></a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
 </div>

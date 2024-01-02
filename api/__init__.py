@@ -24,7 +24,8 @@ def row_to_dict(row, cursor_description):
     return dict(zip(column_names, row))
 
 import api.pdf_signer
-import api.renderSections
+import api.renderSection3
+import api.renderSection2
 
 app.secret_key = "jaojaojao"
 
@@ -384,9 +385,9 @@ def getForm():
     if section == "1":
         return render_template('/components/newAttestationForm/sections/section1.html', products=res, section=section, attestation=attestation)
     elif section == "2":
-        return api.renderSections.section2(section_id=section, attestation_id=attestation)
+        return api.renderSection2.section2(section_id=section, attestation_id=attestation)
     elif section == "3":
-        return api.renderSections.section3(section_id=section, attestation_id=attestation)
+        return api.renderSection3.section3(section_id=section, attestation_id=attestation)
     return "<a>Erro</a>"
 
 

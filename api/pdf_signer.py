@@ -21,39 +21,11 @@ DATABASE_CONFIG = {
     "database": "u138282597_siemens"
 }
 
-@app.route("/signpdf")
-def signpdf():
-
-
-    data = request.get_json()
-    attestation_id = data["data"].get('attestation_id')
-
-    conn = mysql.connector.connect(**DATABASE_CONFIG)
-    cursor = conn.cursor()
-
-    cookie_user_id = request.cookies.get('user')
-    sql ="SELECT * FROM USERS WHERE USERNAME = %s LIMIT 1;"
-    params=[cookie_user_id]
-    cursor.execute(sql,params)
-    fetch = cursor.fetchone()
-    user = row_to_dict(fetch,cursor.description)
-
-    sql = "SELECT FILENAME FROM ATTESTATION WHERE ID = %s;"
-    params=[attestation_id]
-    cursor.execute(sql, params)
-    fetch = cursor.fetchone()
-
-    att = row_to_dict(fetch,cursor.description)
-    if(att != None and user != None):
-        print(user, file=sys.stderr)
-        print(att, file=sys.stderr)
-        createSignedPdf(user.USERNAME,user.ID,att.FILENAME)
-    return {"code":"0"}
-
 # https://pyhanko.readthedocs.io/en/latest/lib-guide/signing.html#text-based-stamps
 def createSignedPdf(keyholder_name,serial_number,input_path):
-
-    cs12path = "./resources/container.pfx"
+    print(keyholder_name,sys.stdout)
+    print(serial_number,sys.stdout)
+    cs12path = "./api/resources/container.pfx"
     create_keys(keyholder_name,serial_number,cs12path)
 
     def sanity_check(x1, y1, w, h):
@@ -74,16 +46,16 @@ def createSignedPdf(keyholder_name,serial_number,input_path):
             pdf_signer = signers.PdfSigner(
                 meta, signer=cms_signer, stamp_style=stamp.TextStampStyle(
                     stamp_text='   Signed by: %(signer)s\n\t                Time: %(ts)s',
-                    background=images.PdfImage('./resources/siemens_logo.png'),
+                    background=images.PdfImage('./api/resources/siemens_logo.png'),
                     text_box_style=text.TextBoxStyle(
                         font_size=13,
-                        font=opentype.GlyphAccumulatorFactory('./resources/NotoSans-Regular.ttf')
+                        font=opentype.GlyphAccumulatorFactory('./api/resources/NotoSans-Regular.ttf')
                     ),
                 )
             )
             with open(input_path.replace(".pdf","")+"_signed.pdf", 'wb') as outf:
                 pdf_signer.sign_pdf(w, output=outf)
-            os.remove('./resources/container.pfx')
+            os.remove('./api/resources/container.pfx')
             return { "code":"0"}
         else:
             return { "code":"1"}

@@ -1,33 +1,45 @@
 <div class="flex flex-col">
-    <div class="flex flex-row items-center">
-        <span class="min-w-[200px] font-[500] mr-2">Attestation Number</span>
-        <span class="min-w-[200px] font-[500] mr-2">Completed?</span>
-    </div>
-    <span class="w-full h-[2px] bg-primary mb-4"></span>
-    {% for a in attestations %}
-    <div class="flex flex-row items-center shadow-md my-2">
-        <span class="min-w-[200px] mr-2">{{ a[0] }}</span>
-        {% if a[1] == 'complete' %}
-        <button a="{{ a[0] }}" class="btn btn-primary btn-sm text-white generateAttestation"> Generate PDF </button>
-        {% else %}
-        <span class="text-white text-[500] text-sm">Incomplete</span>
-        {% endif %}
-    </div>
-    <span class="w-full h-[1px] bg-white opacity-30"></span>
-    {% endfor %}
+	<div class="flex flex-row items-center">
+		<span class="min-w-[200px] font-[500] mr-2">Attestation Number</span>
+		<span class="min-w-[200px] font-[500] mr-2">Completed?</span>
+	</div>
+	<span class="w-full h-[2px] bg-primary mb-4"></span>
+	{% for a in attestations %}
+	<div class="flex flex-row items-center shadow-md my-2">
+		<span class="min-w-[200px] mr-2">{{ a[0] }}</span>
+		{% if a[1] == 'complete' %}
+		<button a="{{ a[0] }}" class="btn btn-primary btn-sm text-white generateAttestation"> Get PDF </button>
+		{% else %}
+		<span class="text-white text-[500] text-sm">Incomplete</span>
+		{% endif %}
+	</div>
+	<span class="w-full h-[1px] bg-white opacity-30"></span>
+	{% endfor %}
 </div>
 
 <script>
-    $(".generateAttestation").on("click", (e) => {
+	$(".generateAttestation").on("click", (e) => {
+		console.log("aa")
+		axios({
+			method: 'post',
+			url: '/api/getAttestationPDF',
+			responseType: 'blob', // Set responseType to 'arraybuffer' for binary data
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			data: {
+				'attestation_id': $(e.currentTarget).attr("a"),
+			},
+		}).then((response) => {
+			// Create a Blob from the binary data and create a download link
+			const blob = new Blob([response.data], {type: 'application/pdf'});
+			const link = document.createElement('a');
+			link.href = window.URL.createObjectURL(blob);
+			link.download = response.headers['content-disposition'].split('filename=')[1];
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		});
 
-        axios.post(`/api/generateAttestationPDF`, {
-        headers: { 'Content-Type': 'text/html', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*' },
-        data: {
-            attestation: $(e.currentTarget).attr("a")
-        },
-        }).then( (response) => {
-            
-        });
-
-    });
+	});
 </script>

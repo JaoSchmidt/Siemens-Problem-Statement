@@ -13,7 +13,7 @@
 			</p>
 			<p class="font-[600] text-md">
 				1) The software is developed and built in secure environments. Those environments are secured
-				by the following actions, at a minimum:	
+				by the following actions, at a minimum:
 			</p>
 			<p class="font-[300] text-md">
 				a) Separating and protecting each environment involved in developing and building
@@ -34,7 +34,7 @@
 				relevant to developing and building software in a manner that minimizes security risk;
 			</p>
 			<p class="font-[300] text-md">
-				d) Taking consistent and reasonable steps to document, as well as minimize use or inclusion	
+				d) Taking consistent and reasonable steps to document, as well as minimize use or inclusion
 				of software products that create undue risk within the environments used to develop and
 				build software;
 			</p>
@@ -73,8 +73,13 @@
 				timelines specified in the vulnerability disclosure program or applicable policies.
 			</p>
 			<div class="flex flex-row my-4">
-				<input class="checkbox mr-2" type="checkbox" id="accept-terms" name="accept-terms" value={{terms.acceptTerms}}>
-				<label for="accept-terms">To the best of my knowledge, I attest that all requirements outlined above are consistently
+				{% if terms.acceptTerms == "1" %}
+				<input class="checkbox mr-2" type="checkbox" id="accept-terms" name="accept-terms" value="on">
+				{% else %}
+				<input class="checkbox mr-2" type="checkbox" id="accept-terms" name="accept-terms">
+				{% endif %}
+				<label for="accept-terms">To the best of my knowledge, I attest that all requirements outlined above are
+					consistently
 					maintained and satisfied. I further attest the company will notify all impacted agencies if
 					conformance to any element of this attestation is no longer valid.</label>
 			</div>
@@ -90,7 +95,11 @@
 			Attestation by Third Party
 		</div>
 		<div class="collapse-content">
-			<input class="checkbox mr-2" type="checkbox" id="third-party-terms" name="accept-terms" value={{terms.thirdPartyTerms}}>
+			{% if terms.thirdPartyTerms == "1" %}
+			<input class="checkbox mr-2" type="checkbox" id="third-party-terms" name="third-party-terms" value="on">
+			{% else %}
+			<input class="checkbox mr-2" type="checkbox" id="third-party-terms" name="third-party-terms">
+			{% endif %}
 			<label for="third-party-terms">A Third Party Assessor Organization (3PAO), either FedRAMP-certified or approved in
 				writing by an appropriate agency official, has evaluated our conformance with all elements in
 				this form. The 3PAO used relevant NIST Guidance that includes all elements outlined in this
@@ -115,7 +124,7 @@
 
 	$("#downloadTermsFile").on("click", () => {
 		axios.get(`/api/downloadTermsFile`, {
-		headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*'},
+			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Origin': '*'},
 		}).then((response) => {
 
 			let code = response.data["code"];
@@ -128,47 +137,40 @@
 	$("#submitSection3").on("click", () => {
 
 		let acceptTerms = $("#accept-terms").val();
+		if (acceptTerms = "on") {
+			acceptTerms = "1"
+			axios.post(`/api/submitSection3`, {
+				headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
+				data: {
+					section_id: 3,
+					attestation_id: $("#attestation").attr("a"),
+					acceptTerms: acceptTerms,
+				},
+			}).then((response) => {
 
-		axios.post(`/api/submitSection3`, {
-			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
-			data: {
-				section_id: 3,
-				attestation_id: $("#attestation").attr("a"),
-				acceptTerms: acceptTerms,
-			},
-		}).then((response) => {
-
-			let code = response.data["code"];
-
-			if (code == "1") {
-				window.location.replace("/dashboard");
-			} else {
-				alert("Erro!");
-			}
-		});
+			});
+		}
 	});
 	$("#submitSection3ThirdParty").on("click", () => {
 
 		let thirdPartyTerms = $("#third-party-terms").val();
 		let thirdPartyfile = $("#third-party-file").val();
 
-		axios.post(`/api/submitSection3ThirdParty`, {
-			headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
-			data: {
-				section_id: 3,
-				attestation_id: $("#attestation").attr("a"),
-				thirdPartyTerms: thirdPartyTerms,
-				thirdPartyfile: thirdPartyfile
-			},
-		}).then((response) => {
+		if (thirdPartyTerms = "on") {
+			thirdPartyTerms = "1"
+			axios.post(`/api/submitSection3ThirdParty`, {
+				headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Origin': '*'},
+				data: {
+					section_id: 3,
+					attestation_id: $("#attestation").attr("a"),
+					thirdPartyTerms: thirdPartyTerms,
+					thirdPartyfile: thirdPartyfile
+				},
+			}).then((response) => {
 
-			let code = response.data["code"];
+			});
+		}
 
-			if (code == "1") {
-				window.location.replace("/dashboard");
-			} else {
-				alert("Erro!");
-			}
-		});
+
 	}); 
 </script>

@@ -7,7 +7,7 @@
     {% for a in attestations %}
     <div class="flex flex-row items-center shadow-md my-2">
         <span class="min-w-[200px] mr-2">{{ a[0] }}</span>
-        {% if a[1] != 'complete' %}
+        {% if a[1] == 'complete' %}
         <button a="{{ a[0] }}" class="btn btn-primary btn-sm text-white generateAttestation"> Generate PDF </button>
         {% else %}
         <span class="text-white text-[500] text-sm">Incomplete</span>

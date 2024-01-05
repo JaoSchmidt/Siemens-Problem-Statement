@@ -53,7 +53,7 @@ Here is a cleaner version without those tables, it would have been my final sche
 
 ![ER2](https://github.com/JaoSchmidt/Siemens-Problem-Statement/assets/51456769/235dfb6b-05ec-4569-a0ba-b97d48401cc5)
 
-#### Endpoints Documentation
+## Endpoints Documentation
 (OBS: There are a lot of .html templates being returned, which might be weird for some API, however that is the default behavior for Flask. It is also completely optional and can be removed later to just return actual data to some separate frontend.
 
 ##### **/api/checkUser** POST
